@@ -78,40 +78,58 @@ namespace hue {
     #endif
 
     namespace common {
-        struct modifier {
-            std::string label;
-            /**
-             * Either 0 or 1
-             */
-            std::optional<int64_t> less_is_good;
-            std::optional<double> original_value;
-            /**
-             * Either Value or ValueStr is used. These modification types have string values:
-             * WeaponMode, DamageType, CabinClass.
-             */
-            std::optional<double> value;
-            /**
-             * Either Value or ValueStr is used. These modification types have string values:
-             * WeaponMode, DamageType, CabinClass.
-             */
-            std::optional<std::string> value_str;
-            std::optional<std::string> value_str_localised;
-        };
 
-        /*
-         * If engineered
-         */
-        struct engineering {
-            int64_t blueprint_id;
-            std::string blueprint_name;
-            std::optional<std::string> engineer;
-            int64_t engineer_id;
-            std::optional<std::string> experimental_effect;
-            std::optional<std::string> experimental_effect_localised;
-            int64_t level;
-            std::vector<modifier> modifiers;
-            double quality;
-        };
+        namespace types {
+            struct modifier {
+                std::string label;
+                /**
+                 * Either 0 or 1
+                 */
+                std::optional<int64_t> less_is_good;
+                std::optional<double> original_value;
+                /**
+                 * Either Value or ValueStr is used. These modification types have string values:
+                 * WeaponMode, DamageType, CabinClass.
+                 */
+                std::optional<double> value;
+                /**
+                 * Either Value or ValueStr is used. These modification types have string values:
+                 * WeaponMode, DamageType, CabinClass.
+                 */
+                std::optional<std::string> value_str;
+                std::optional<std::string> value_str_localised;
+            };
+
+            /*
+             * If engineered
+             */
+            struct engineering {
+                int64_t blueprint_id;
+                std::string blueprint_name;
+                std::optional<std::string> engineer;
+                int64_t engineer_id;
+                std::optional<std::string> experimental_effect;
+                std::optional<std::string> experimental_effect_localised;
+                int64_t level;
+                std::vector<modifier> modifiers;
+                double quality;
+            };
+
+            struct faction1 {
+                std::string name;
+                std::string stake;
+                std::optional<std::string> stake_localised;
+                int64_t won_days;
+            };
+
+            struct faction2 {
+                std::string name;
+                std::string stake;
+                int64_t won_days;
+            };
+        }
+
+
 
         struct module_element {
             /**
@@ -125,7 +143,7 @@ namespace hue {
             /**
              * If engineered
              */
-            std::optional<engineering> engineering;
+            std::optional<types::engineering> engineering;
             double health;
             /**
              * Module name - lowercase
@@ -210,22 +228,9 @@ namespace hue {
             std::optional<std::string> name_localised;
         };
 
-        struct faction1 {
-            std::string name;
-            std::string stake;
-            std::optional<std::string> stake_localised;
-            int64_t won_days;
-        };
-
-        struct faction2 {
-            std::string name;
-            std::string stake;
-            int64_t won_days;
-        };
-
         struct conflict {
-            faction1 faction1;
-            faction2 faction2;
+            types::faction1 faction1;
+            types::faction2 faction2;
             std::string status;
             std::string war_type;
         };
@@ -305,6 +310,81 @@ namespace hue {
 namespace hue {
 
     namespace common {
+
+        namespace types {
+            inline void from_json(const json& j, modifier& x) {
+                x.label = j.at("Label").get<std::string>();
+                x.less_is_good = get_stack_optional<int64_t>(j, "LessIsGood");
+                x.original_value = get_stack_optional<double>(j, "OriginalValue");
+                x.value = get_stack_optional<double>(j, "Value");
+                x.value_str = get_stack_optional<std::string>(j, "ValueStr");
+                x.value_str_localised = get_stack_optional<std::string>(j, "ValueStr_Localised");
+            }
+
+            inline void to_json(json& j, const modifier& x) {
+                j = json::object();
+                j["Label"] = x.label;
+                j["LessIsGood"] = x.less_is_good;
+                j["OriginalValue"] = x.original_value;
+                j["Value"] = x.value;
+                j["ValueStr"] = x.value_str;
+                j["ValueStr_Localised"] = x.value_str_localised;
+            }
+
+            inline void from_json(const json& j, faction1& x) {
+                x.name = j.at("Name").get<std::string>();
+                x.stake = j.at("Stake").get<std::string>();
+                x.stake_localised = get_stack_optional<std::string>(j, "Stake_Localised");
+                x.won_days = j.at("WonDays").get<int64_t>();
+            }
+
+            inline void to_json(json& j, const faction1& x) {
+                j = json::object();
+                j["Name"] = x.name;
+                j["Stake"] = x.stake;
+                j["Stake_Localised"] = x.stake_localised;
+                j["WonDays"] = x.won_days;
+            }
+
+            inline void from_json(const json& j, faction2& x) {
+                x.name = j.at("Name").get<std::string>();
+                x.stake = j.at("Stake").get<std::string>();
+                x.won_days = j.at("WonDays").get<int64_t>();
+            }
+
+            inline void to_json(json& j, const faction2& x) {
+                j = json::object();
+                j["Name"] = x.name;
+                j["Stake"] = x.stake;
+                j["WonDays"] = x.won_days;
+            }
+
+
+            inline void from_json(const json& j, engineering& x) {
+                x.blueprint_id = j.at("BlueprintID").get<int64_t>();
+                x.blueprint_name = j.at("BlueprintName").get<std::string>();
+                x.engineer = get_stack_optional<std::string>(j, "Engineer");
+                x.engineer_id = j.at("EngineerID").get<int64_t>();
+                x.experimental_effect = get_stack_optional<std::string>(j, "ExperimentalEffect");
+                x.experimental_effect_localised = get_stack_optional<std::string>(j, "ExperimentalEffect_Localised");
+                x.level = j.at("Level").get<int64_t>();
+                x.modifiers = j.at("Modifiers").get<std::vector<modifier>>();
+                x.quality = j.at("Quality").get<double>();
+            }
+
+            inline void to_json(json& j, const engineering& x) {
+                j = json::object();
+                j["BlueprintID"] = x.blueprint_id;
+                j["BlueprintName"] = x.blueprint_name;
+                j["Engineer"] = x.engineer;
+                j["EngineerID"] = x.engineer_id;
+                j["ExperimentalEffect"] = x.experimental_effect;
+                j["ExperimentalEffect_Localised"] = x.experimental_effect_localised;
+                j["Level"] = x.level;
+                j["Modifiers"] = x.modifiers;
+                j["Quality"] = x.quality;
+            }
+        }
 
 
         inline void from_json(const json& j, suit_module_element& x) {
@@ -405,25 +485,6 @@ namespace hue {
             j["Type_Localised"] = x.type_localised;
         }
 
-        inline void from_json(const json& j, modifier& x) {
-            x.label = j.at("Label").get<std::string>();
-            x.less_is_good = get_stack_optional<int64_t>(j, "LessIsGood");
-            x.original_value = get_stack_optional<double>(j, "OriginalValue");
-            x.value = get_stack_optional<double>(j, "Value");
-            x.value_str = get_stack_optional<std::string>(j, "ValueStr");
-            x.value_str_localised = get_stack_optional<std::string>(j, "ValueStr_Localised");
-        }
-
-        inline void to_json(json& j, const modifier& x) {
-            j = json::object();
-            j["Label"] = x.label;
-            j["LessIsGood"] = x.less_is_good;
-            j["OriginalValue"] = x.original_value;
-            j["Value"] = x.value;
-            j["ValueStr"] = x.value_str;
-            j["ValueStr_Localised"] = x.value_str_localised;
-        }
-
         inline void from_json(const json& j, crew& x) {
             x.name = j.at("Name").get<std::string>();
             x.role = j.at("Role").get<std::string>();
@@ -488,37 +549,11 @@ namespace hue {
             j["Name"] = x.name;
         }
 
-        inline void from_json(const json& j, faction1& x) {
-            x.name = j.at("Name").get<std::string>();
-            x.stake = j.at("Stake").get<std::string>();
-            x.stake_localised = get_stack_optional<std::string>(j, "Stake_Localised");
-            x.won_days = j.at("WonDays").get<int64_t>();
-        }
 
-        inline void to_json(json& j, const faction1& x) {
-            j = json::object();
-            j["Name"] = x.name;
-            j["Stake"] = x.stake;
-            j["Stake_Localised"] = x.stake_localised;
-            j["WonDays"] = x.won_days;
-        }
-
-        inline void from_json(const json& j, faction2& x) {
-            x.name = j.at("Name").get<std::string>();
-            x.stake = j.at("Stake").get<std::string>();
-            x.won_days = j.at("WonDays").get<int64_t>();
-        }
-
-        inline void to_json(json& j, const faction2& x) {
-            j = json::object();
-            j["Name"] = x.name;
-            j["Stake"] = x.stake;
-            j["WonDays"] = x.won_days;
-        }
 
         inline void from_json(const json& j, conflict& x) {
-            x.faction1 = j.at("Faction1").get<faction1>();
-            x.faction2 = j.at("Faction2").get<faction2>();
+            x.faction1 = j.at("Faction1").get<types::faction1>();
+            x.faction2 = j.at("Faction2").get<types::faction2>();
             x.status = j.at("Status").get<std::string>();
             x.war_type = j.at("WarType").get<std::string>();
         }
@@ -641,35 +676,11 @@ namespace hue {
         }
 
 
-        inline void from_json(const json& j, engineering& x) {
-            x.blueprint_id = j.at("BlueprintID").get<int64_t>();
-            x.blueprint_name = j.at("BlueprintName").get<std::string>();
-            x.engineer = get_stack_optional<std::string>(j, "Engineer");
-            x.engineer_id = j.at("EngineerID").get<int64_t>();
-            x.experimental_effect = get_stack_optional<std::string>(j, "ExperimentalEffect");
-            x.experimental_effect_localised = get_stack_optional<std::string>(j, "ExperimentalEffect_Localised");
-            x.level = j.at("Level").get<int64_t>();
-            x.modifiers = j.at("Modifiers").get<std::vector<modifier>>();
-            x.quality = j.at("Quality").get<double>();
-        }
-
-        inline void to_json(json& j, const engineering& x) {
-            j = json::object();
-            j["BlueprintID"] = x.blueprint_id;
-            j["BlueprintName"] = x.blueprint_name;
-            j["Engineer"] = x.engineer;
-            j["EngineerID"] = x.engineer_id;
-            j["ExperimentalEffect"] = x.experimental_effect;
-            j["ExperimentalEffect_Localised"] = x.experimental_effect_localised;
-            j["Level"] = x.level;
-            j["Modifiers"] = x.modifiers;
-            j["Quality"] = x.quality;
-        }
 
         inline void from_json(const json& j, module_element& x) {
             x.ammo_in_clip = get_stack_optional<int64_t>(j, "AmmoInClip");
             x.ammo_in_hopper = get_stack_optional<int64_t>(j, "AmmoInHopper");
-            x.engineering = get_stack_optional<engineering>(j, "Engineering");
+            x.engineering = get_stack_optional<types::engineering>(j, "Engineering");
             x.health = j.at("Health").get<double>();
             x.item = j.at("Item").get<std::string>();
             x.on = j.at("On").get<bool>();

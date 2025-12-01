@@ -5,7 +5,7 @@
 
 struct process {
     std::optional<uint32_t> pid;
-    std::wstring journal_dir;
+    std::string journal_dir;
 
     explicit process(const std::string &journal_dir);
 

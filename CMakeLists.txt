@@ -30,7 +30,9 @@ FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download
 FetchContent_MakeAvailable(json)
 
 if(WIN32)
-set(PLATFORM_SOURCE src/watch_win32.cpp src/process.cpp)
+set(PLATFORM_SOURCE src/watch_win32.cpp src/process_win32.cpp)
+else()
+set(PLATFORM_SOURCE src/watch_inotify.cpp src/process_linux.cpp)
 endif()
 
 file(GLOB EVENT_SOURCE "src/events/*.cpp")

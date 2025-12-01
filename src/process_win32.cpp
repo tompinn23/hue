@@ -91,19 +91,18 @@ static std::wstring proc_owner(DWORD pid) {
 }
 
 process::process(const std::string &journal_dir) {
-    int wlen = MultiByteToWideChar(CP_UTF8, 0,
-                               journal_dir.c_str(), journal_dir.size(),
-                               nullptr, 0);
-    std::wstring wjournal_dir(wlen, L'\0');
-    MultiByteToWideChar(CP_UTF8, 0,
-                        journal_dir.c_str(), journal_dir.size(),
-                        wjournal_dir.data(), wlen);
-    this->journal_dir = wjournal_dir;
-
+    this->journal_dir = journal_dir;
 }
 
 bool process::running() {
-    std::wstring dirSid  = file_owner(journal_dir);
+    int wlen = MultiByteToWideChar(CP_UTF8, 0,
+        journal_dir.c_str(), journal_dir.size(),
+        nullptr, 0);
+    std::wstring wjournal_dir(wlen, L'\0');
+    MultiByteToWideChar(CP_UTF8, 0,
+        journal_dir.c_str(), journal_dir.size(),
+        wjournal_dir.data(), wlen);
+    std::wstring dirSid  = file_owner(wjournal_dir);
     std::wstring selfSid = self_owner();
 
     if (pid) {
