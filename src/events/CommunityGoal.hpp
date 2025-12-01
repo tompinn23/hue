@@ -16,11 +16,12 @@ namespace hue {
     using nlohmann::json;
 
 
-
-    struct top_tier {
-        std::string bonus;
-        std::string name;
-    };
+    namespace types {
+        struct top_tier {
+            std::string bonus;
+            std::string name;
+        };
+    }
 
     struct current_goal {
         /**
@@ -57,7 +58,7 @@ namespace hue {
          * players)
          */
         std::optional<int64_t> top_rank_size;
-        top_tier top_tier;
+        types::top_tier top_tier;
     };
 
     /**
@@ -76,14 +77,8 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, top_tier & x);
-    void to_json(json & j, const top_tier & x);
 
-    void from_json(const json & j, current_goal & x);
-    void to_json(json & j, const current_goal & x);
-
-    void from_json(const json & j, community_goal & x);
-    void to_json(json & j, const community_goal & x);
+    namespace types {
 
     inline void from_json(const json & j, top_tier& x) {
         x.bonus = j.at("Bonus").get<std::string>();
@@ -95,6 +90,7 @@ namespace hue {
         j["Bonus"] = x.bonus;
         j["Name"] = x.name;
     }
+}
 
     inline void from_json(const json & j, current_goal& x) {
         x.bonus = get_stack_optional<int64_t>(j, "Bonus");
@@ -111,7 +107,7 @@ namespace hue {
         x.tier_reached = get_stack_optional<std::string>(j, "TierReached");
         x.title = j.at("Title").get<std::string>();
         x.top_rank_size = get_stack_optional<int64_t>(j, "TopRankSize");
-        x.top_tier = j.at("TopTier").get<top_tier>();
+        x.top_tier = j.at("TopTier").get<types::top_tier>();
     }
 
     inline void to_json(json & j, const current_goal & x) {

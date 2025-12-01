@@ -248,8 +248,8 @@ namespace hue {
     };
 
 
-    semver coerce_semver(const std::string& s) {
-        semver out;
+    semantic_version coerce_semver(const std::string& s) {
+        semantic_version out;
 
         std::string digits;
         digits.reserve(s.size());
@@ -1727,7 +1727,7 @@ namespace hue {
         auto suitloadout_slotid = suit_loadout_id_from_loadout_id(json["LoadoutID"].get<int64_t>());
         suit_loadout loadout = suit_loadout {
             .loadout_slot_id =  suitloadout_slotid,
-            .suit = current,
+            .current_suit = current,
             .name = json["LoadoutName"].get<std::string>(),
         };
         state.suit_loadouts[suitloadout_slotid] = loadout;

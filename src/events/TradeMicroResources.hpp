@@ -17,7 +17,7 @@ namespace hue {
 
 
 
-    struct offered {
+    struct offer {
         std::string category;
         int64_t count;
         std::string name;
@@ -33,7 +33,7 @@ namespace hue {
         int64_t count;
         std::string event;
         int64_t market_id;
-        std::vector<offered> offered;
+        std::vector<offer> offered;
         std::string received;
         std::optional<std::string> received_localised;
         /**
@@ -45,20 +45,20 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, offered & x);
-    void to_json(json & j, const offered & x);
+    void from_json(const json & j, offer & x);
+    void to_json(json & j, const offer & x);
 
     void from_json(const json & j, trade_micro_resources & x);
     void to_json(json & j, const trade_micro_resources & x);
 
-    inline void from_json(const json & j, offered& x) {
+    inline void from_json(const json & j, offer& x) {
         x.category = j.at("Category").get<std::string>();
         x.count = j.at("Count").get<int64_t>();
         x.name = j.at("Name").get<std::string>();
         x.name_localised = get_stack_optional<std::string>(j, "Name_Localised");
     }
 
-    inline void to_json(json & j, const offered & x) {
+    inline void to_json(json & j, const offer & x) {
         j = json::object();
         j["Category"] = x.category;
         j["Count"] = x.count;
@@ -71,7 +71,7 @@ namespace hue {
         x.count = j.at("Count").get<int64_t>();
         x.event = j.at("event").get<std::string>();
         x.market_id = j.at("MarketID").get<int64_t>();
-        x.offered = j.at("Offered").get<std::vector<offered>>();
+        x.offered = j.at("Offered").get<std::vector<offer>>();
         x.received = j.at("Received").get<std::string>();
         x.received_localised = get_stack_optional<std::string>(j, "Received_Localised");
         x.timestamp = j.at("timestamp").get<std::string>();

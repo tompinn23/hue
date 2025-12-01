@@ -5,10 +5,12 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <limits.h>
+#include <signal.h>
 #include <string>
 #include <optional>
 #include <cerrno>
 #include <cstring>
+
 
 static std::string file_owner(const std::string& path) {
     struct stat st;

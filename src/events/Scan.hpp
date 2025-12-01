@@ -17,7 +17,7 @@ namespace hue {
 
 
 
-    struct atmosphere_composition {
+    struct atmospheric_composition {
         std::string name;
         double percent;
     };
@@ -25,7 +25,7 @@ namespace hue {
     /**
      * Written for Planet/Moon
      */
-    struct composition {
+    struct composition_entry {
         double ice;
         double metal;
         double rock;
@@ -80,7 +80,7 @@ namespace hue {
         /**
          * Written for Planet/Moon
          */
-        std::optional<std::vector<atmosphere_composition>> atmosphere_composition;
+        std::optional<std::vector<atmospheric_composition>> atmosphere_composition;
         /**
          * Written for Planet/Moon
          */
@@ -100,7 +100,7 @@ namespace hue {
         /**
          * Written for Planet/Moon
          */
-        std::optional<composition> composition;
+        std::optional<composition_entry> composition;
         /**
          * Written for Star/Planet/Moon
          */
@@ -235,11 +235,11 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, atmosphere_composition & x);
-    void to_json(json & j, const atmosphere_composition & x);
+    void from_json(const json & j, atmospheric_composition & x);
+    void to_json(json & j, const atmospheric_composition & x);
 
-    void from_json(const json & j, composition & x);
-    void to_json(json & j, const composition & x);
+    void from_json(const json & j, composition_entry & x);
+    void to_json(json & j, const composition_entry & x);
 
     void from_json(const json & j, scan_material& x);
     void to_json(json & j, const scan_material& x);
@@ -253,24 +253,24 @@ namespace hue {
     void from_json(const json & j, scan & x);
     void to_json(json & j, const scan & x);
 
-    inline void from_json(const json & j, atmosphere_composition& x) {
+    inline void from_json(const json & j, atmospheric_composition& x) {
         x.name = j.at("Name").get<std::string>();
         x.percent = j.at("Percent").get<double>();
     }
 
-    inline void to_json(json & j, const atmosphere_composition & x) {
+    inline void to_json(json & j, const atmospheric_composition & x) {
         j = json::object();
         j["Name"] = x.name;
         j["Percent"] = x.percent;
     }
 
-    inline void from_json(const json & j, composition& x) {
+    inline void from_json(const json & j, composition_entry& x) {
         x.ice = j.at("Ice").get<double>();
         x.metal = j.at("Metal").get<double>();
         x.rock = j.at("Rock").get<double>();
     }
 
-    inline void to_json(json & j, const composition & x) {
+    inline void to_json(json & j, const composition_entry & x) {
         j = json::object();
         j["Ice"] = x.ice;
         j["Metal"] = x.metal;
@@ -327,12 +327,12 @@ namespace hue {
         x.age_my = get_stack_optional<int64_t>(j, "Age_MY");
         x.ascending_node = get_stack_optional<double>(j, "AscendingNode");
         x.atmosphere = get_stack_optional<std::string>(j, "Atmosphere");
-        x.atmosphere_composition = get_stack_optional<std::vector<atmosphere_composition>>(j, "AtmosphereComposition");
+        x.atmosphere_composition = get_stack_optional<std::vector<atmospheric_composition>>(j, "AtmosphereComposition");
         x.atmosphere_type = get_stack_optional<std::string>(j, "AtmosphereType");
         x.axial_tilt = get_stack_optional<double>(j, "AxialTilt");
         x.body_id = j.at("BodyID").get<int64_t>();
         x.body_name = j.at("BodyName").get<std::string>();
-        x.composition = get_stack_optional<composition>(j, "Composition");
+        x.composition = get_stack_optional<composition_entry>(j, "Composition");
         x.distance_from_arrival_ls = j.at("DistanceFromArrivalLS").get<double>();
         x.eccentricity = get_stack_optional<double>(j, "Eccentricity");
         x.event = j.at("event").get<std::string>();

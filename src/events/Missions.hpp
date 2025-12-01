@@ -16,8 +16,8 @@ namespace hue {
     using nlohmann::json;
 
 
-
-    struct active {
+    namespace types {
+        struct active {
         /**
          * Time left in seconds
          */
@@ -49,15 +49,16 @@ namespace hue {
         std::optional<std::string> name_localised;
         bool passenger_mission;
     };
+    }
 
     /**
      * When written: at startup
      */
     struct missions {
-        std::vector<active> active;
-        std::vector<complete> complete;
+        std::vector<types::active> active;
+        std::vector<types::complete> complete;
         std::string event;
-        std::vector<failed> failed;
+        std::vector<types::failed> failed;
         /**
          * Timestamp in UTC, ISO 8601
          */
@@ -66,18 +67,7 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, active & x);
-    void to_json(json & j, const active & x);
-
-    void from_json(const json & j, complete & x);
-    void to_json(json & j, const complete & x);
-
-    void from_json(const json & j, failed & x);
-    void to_json(json & j, const failed & x);
-
-    void from_json(const json & j, missions & x);
-    void to_json(json & j, const missions & x);
-
+    namespace types {
     inline void from_json(const json & j, active& x) {
         x.expires = j.at("Expires").get<int64_t>();
         x.mission_id = j.at("MissionID").get<int64_t>();
@@ -128,12 +118,18 @@ namespace hue {
         j["Name_Localised"] = x.name_localised;
         j["PassengerMission"] = x.passenger_mission;
     }
+    }
+
+    void from_json(const json & j, missions & x);
+    void to_json(json & j, const missions & x);
+
+
 
     inline void from_json(const json & j, missions& x) {
-        x.active = j.at("Active").get<std::vector<active>>();
-        x.complete = j.at("Complete").get<std::vector<complete>>();
+        x.active = j.at("Active").get<std::vector<types::active>>();
+        x.complete = j.at("Complete").get<std::vector<types::complete>>();
         x.event = j.at("event").get<std::string>();
-        x.failed = j.at("Failed").get<std::vector<failed>>();
+        x.failed = j.at("Failed").get<std::vector<types::failed>>();
         x.timestamp = j.at("timestamp").get<std::string>();
     }
 

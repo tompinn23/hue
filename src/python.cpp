@@ -52,20 +52,20 @@ private:
 class PyEventIterator {
 public:
     PyEventIterator(std::shared_ptr<reader> r)
-        : reader(std::move(r)) {
+        : _reader(std::move(r)) {
     }
 
     py::object next() {
         py::gil_scoped_release release;    // release GIL during blocking wait
 
         while (true) {
-            auto h = reader->acquire();
+            auto h = _reader->acquire();
             if (!h) {
                 std::this_thread::sleep_for(std::chrono::milliseconds{ 10 });
                 continue;
             }
 
-            std::pair<hue::state, event> item;
+            std::pair<hue::game_state, event> item;
             // finite timeout, never infinite
             spdlog::trace("waiting for next event");
             bool ok = h->wait_dequeue_timed(item, std::chrono::milliseconds{ 100 });
@@ -84,34 +84,34 @@ public:
     }
 
 private:
-    std::shared_ptr<reader> reader;
+    std::shared_ptr<reader> _reader;
 };
 
 class py_reader {
 public:
     explicit py_reader(const std::string& journal_dir)
-        : reader(std::make_shared<hue::reader>(journal_dir)) {
+        : _reader(std::make_shared<hue::reader>(journal_dir)) {
     }
 
     ~py_reader() {
-		reader->stop();
+		_reader->stop();
         if (thr.joinable())
             thr.join();
     }
 
     void start() {
         // spawn a pure C++ thread
-        thr = std::thread([r = reader] {
+        thr = std::thread([r = _reader] {
             r->run();
             });
     }
 
     PyEventIterator events() {
-        return PyEventIterator(reader);
+        return PyEventIterator(_reader);
     }
 
 private:
-    std::shared_ptr<hue::reader> reader;
+    std::shared_ptr<hue::reader> _reader;
     std::thread thr;
 };
 
@@ -150,7 +150,7 @@ PYBIND11_MODULE(_core, m) {
     // suit_loadout
     py::class_<suit_loadout>(m, "SuitLoadout")
         .def_property_readonly("loadout_slot_id", &suit_loadout::get_loadout_slot_id)
-        .def_property_readonly("suit",            &suit_loadout::get_suit,
+        .def_property_readonly("suit",            &suit_loadout::get_current_suit,
                                py::return_value_policy::reference_internal)
         .def_property_readonly("name",            &suit_loadout::get_name)
         .def_property_readonly("slots",           &suit_loadout::get_slots);
@@ -173,84 +173,84 @@ PYBIND11_MODULE(_core, m) {
         .def_property_readonly("time_pledged", &powerplay_info::get_time_pledged);
 
 
-    // state
-    py::class_<state>(m, "State")
-        .def_property_readonly("game_language",     &state::get_game_language)
-        .def_property_readonly("game_version",      &state::get_game_version)
-        .def_property_readonly("game_build",        &state::get_game_build)
+    // game_state
+    py::class_<game_state>(m, "State")
+        .def_property_readonly("game_language",     &game_state::get_game_language)
+        .def_property_readonly("game_version",      &game_state::get_game_version)
+        .def_property_readonly("game_build",        &game_state::get_game_build)
 
-        .def_property_readonly("captain",           &state::get_captain)
-        .def_property_readonly("cargo",             &state::get_cargo)
-        .def_property_readonly("credits",           &state::get_credits)
-        .def_property_readonly("fid",               &state::get_fid)
-        .def_property_readonly("horizons",          &state::get_horizons)
-        .def_property_readonly("odyssey",           &state::get_odyssey)
-        .def_property_readonly("loan",              &state::get_loan)
+        .def_property_readonly("captain",           &game_state::get_captain)
+        .def_property_readonly("cargo",             &game_state::get_cargo)
+        .def_property_readonly("credits",           &game_state::get_credits)
+        .def_property_readonly("fid",               &game_state::get_fid)
+        .def_property_readonly("horizons",          &game_state::get_horizons)
+        .def_property_readonly("odyssey",           &game_state::get_odyssey)
+        .def_property_readonly("loan",              &game_state::get_loan)
 
-        .def_property_readonly("raw",               &state::get_raw)
-        .def_property_readonly("manufactured",      &state::get_manufactured)
-        .def_property_readonly("encoded",           &state::get_encoded)
+        .def_property_readonly("raw",               &game_state::get_raw)
+        .def_property_readonly("manufactured",      &game_state::get_manufactured)
+        .def_property_readonly("encoded",           &game_state::get_encoded)
 
-        .def_property_readonly("engineers",         &state::get_engineers)
-        .def_property_readonly("rank",              &state::get_rank)
-        .def_property_readonly("reputation",        &state::get_reputation)
-        .def_property_readonly("statistics",        &state::get_statistics)
+        .def_property_readonly("engineers",         &game_state::get_engineers)
+        .def_property_readonly("rank",              &game_state::get_rank)
+        .def_property_readonly("reputation",        &game_state::get_reputation)
+        .def_property_readonly("statistics",        &game_state::get_statistics)
 
-        .def_property_readonly("role",              &state::get_role)
+        .def_property_readonly("role",              &game_state::get_role)
 
-        .def_property_readonly("friends",           &state::get_friends)
+        .def_property_readonly("friends",           &game_state::get_friends)
 
-        .def_property_readonly("ship_id",           &state::get_ship_id)
-        .def_property_readonly("ship_ident",        &state::get_ship_ident)
-        .def_property_readonly("ship_name",         &state::get_ship_name)
-        .def_property_readonly("ship_type",         &state::get_ship_type)
-        .def_property_readonly("hull_value",        &state::get_hull_value)
-        .def_property_readonly("modules_value",     &state::get_modules_value)
-        .def_property_readonly("unladen_mass",      &state::get_unladen_mass)
-        .def_property_readonly("cargo_capacity",    &state::get_cargo_capacity)
-        .def_property_readonly("max_jump_range",    &state::get_max_jump_range)
-        .def_property_readonly("fuel_capacity",     &state::get_fuel_capacity)
-        .def_property_readonly("rebuy",             &state::get_rebuy)
+        .def_property_readonly("ship_id",           &game_state::get_ship_id)
+        .def_property_readonly("ship_ident",        &game_state::get_ship_ident)
+        .def_property_readonly("ship_name",         &game_state::get_ship_name)
+        .def_property_readonly("ship_type",         &game_state::get_ship_type)
+        .def_property_readonly("hull_value",        &game_state::get_hull_value)
+        .def_property_readonly("modules_value",     &game_state::get_modules_value)
+        .def_property_readonly("unladen_mass",      &game_state::get_unladen_mass)
+        .def_property_readonly("cargo_capacity",    &game_state::get_cargo_capacity)
+        .def_property_readonly("max_jump_range",    &game_state::get_max_jump_range)
+        .def_property_readonly("fuel_capacity",     &game_state::get_fuel_capacity)
+        .def_property_readonly("rebuy",             &game_state::get_rebuy)
 
-        .def_property_readonly("modules",           &state::get_modules)
-        .def_property_readonly("cargo_json",        &state::get_cargo_json)
-        .def_property_readonly("route",             &state::get_route)
+        .def_property_readonly("modules",           &game_state::get_modules)
+        .def_property_readonly("cargo_json",        &game_state::get_cargo_json)
+        .def_property_readonly("route",             &game_state::get_route)
 
-        .def_property_readonly("is_docked",         &state::get_is_docked)
-        .def_property_readonly("on_foot",           &state::get_on_foot)
+        .def_property_readonly("is_docked",         &game_state::get_is_docked)
+        .def_property_readonly("on_foot",           &game_state::get_on_foot)
 
-        .def_property_readonly("component",         &state::get_component)
-        .def_property_readonly("item",              &state::get_item)
-        .def_property_readonly("consumable",        &state::get_consumable)
-        .def_property_readonly("data",              &state::get_data)
+        .def_property_readonly("component",         &game_state::get_component)
+        .def_property_readonly("item",              &game_state::get_item)
+        .def_property_readonly("consumable",        &game_state::get_consumable)
+        .def_property_readonly("data",              &game_state::get_data)
 
-        .def_property_readonly("backpack",          &state::get_backpack,
+        .def_property_readonly("backpack",          &game_state::get_backpack,
                                py::return_value_policy::reference_internal)
-        .def_property_readonly("backpack_json",     &state::get_backpack_json)
-        .def_property_readonly("ship_locker_json",  &state::get_ship_locker_json)
+        .def_property_readonly("backpack_json",     &game_state::get_backpack_json)
+        .def_property_readonly("ship_locker_json",  &game_state::get_ship_locker_json)
 
-        .def_property_readonly("suits",             &state::get_suits)
-        .def_property_readonly("suit_loadouts",     &state::get_suit_loadouts)
-        .def_property_readonly("suit_current",      &state::get_suit_current)
-        .def_property_readonly("suit_loadout_current", &state::get_suit_loadout_current)
+        .def_property_readonly("suits",             &game_state::get_suits)
+        .def_property_readonly("suit_loadouts",     &game_state::get_suit_loadouts)
+        .def_property_readonly("suit_current",      &game_state::get_suit_current)
+        .def_property_readonly("suit_loadout_current", &game_state::get_suit_loadout_current)
 
-        .def_property_readonly("taxi",              &state::get_taxi)
-        .def_property_readonly("dropship",          &state::get_dropship)
+        .def_property_readonly("taxi",              &game_state::get_taxi)
+        .def_property_readonly("dropship",          &game_state::get_dropship)
 
-        .def_property_readonly("star_pos",          &state::get_star_pos)
-        .def_property_readonly("system_address",    &state::get_system_address)
-        .def_property_readonly("system_name",       &state::get_system_name)
-        .def_property_readonly("system_population", &state::get_system_population)
-        .def_property_readonly("body",              &state::get_body)
-        .def_property_readonly("body_id",           &state::get_body_id)
-        .def_property_readonly("body_type",         &state::get_body_type)
-        .def_property_readonly("station_name",      &state::get_station_name)
-        .def_property_readonly("station_type",      &state::get_station_type)
-        .def_property_readonly("market_id",         &state::get_market_id)
+        .def_property_readonly("star_pos",          &game_state::get_star_pos)
+        .def_property_readonly("system_address",    &game_state::get_system_address)
+        .def_property_readonly("system_name",       &game_state::get_system_name)
+        .def_property_readonly("system_population", &game_state::get_system_population)
+        .def_property_readonly("body",              &game_state::get_body)
+        .def_property_readonly("body_id",           &game_state::get_body_id)
+        .def_property_readonly("body_type",         &game_state::get_body_type)
+        .def_property_readonly("station_name",      &game_state::get_station_name)
+        .def_property_readonly("station_type",      &game_state::get_station_type)
+        .def_property_readonly("market_id",         &game_state::get_market_id)
 
-        .def_property_readonly("nav_route",         &state::get_nav_route)
+        .def_property_readonly("nav_route",         &game_state::get_nav_route)
 
-        .def_property_readonly("power_play",        &state::get_power_play,
+        .def_property_readonly("power_play",        &game_state::get_power_play,
                                py::return_value_policy::reference_internal);
 
     py::class_<hue::module_modifier>(m, "ModuleModifier")

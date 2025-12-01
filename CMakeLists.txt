@@ -8,6 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(RE2_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 set(RE2_INSTALL OFF CACHE BOOL "" FORCE)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 add_subdirectory(third/abseil-cpp EXCLUDE_FROM_ALL)
 add_subdirectory(third/re2 EXCLUDE_FROM_ALL)
 add_subdirectory(third/fmt EXCLUDE_FROM_ALL)
@@ -15,7 +17,6 @@ add_subdirectory(third/fmt EXCLUDE_FROM_ALL)
 set(PYBIND11_FINDPYTHON NEW)
 
 add_subdirectory(third/pybind11 EXCLUDE_FROM_ALL)
-
 include(FetchContent)
 
 

@@ -136,7 +136,7 @@ namespace hue {
 	};
 
 
-	struct semver {
+	struct semantic_version {
 		int major = 0;
 		int minor = 0;
 		int patch = 0;
@@ -223,7 +223,7 @@ namespace hue {
 	};
 
 	struct reader {
-		using queue_type = moodycamel::BlockingReaderWriterQueue<std::pair<state, event>>;
+		using queue_type = moodycamel::BlockingReaderWriterQueue<std::pair<game_state, event>>;
 		using timestamp = std::chrono::sys_time<std::chrono::milliseconds>;
 
 	    struct file_event {
@@ -292,11 +292,11 @@ namespace hue {
 		std::string group;
 		std::string version;
 
-		semver semver;
+		semantic_version semver;
 
 		std::vector<std::string> station_services;
 		timestamp started;
-		state state;
+		game_state state;
 		std::string slef;
 
 		std::unordered_map<int64_t, std::string> carrier_ids;

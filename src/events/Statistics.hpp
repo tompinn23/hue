@@ -18,6 +18,8 @@ namespace hue {
     using nlohmann::json;
 
 
+    namespace types {
+
 
     struct bank_account {
         int64_t current_wealth;
@@ -171,10 +173,10 @@ namespace hue {
         int64_t total_hyperspace_jumps;
     };
 
-    using fleetcarrier_distance_travelled = std::variant<double, std::string>;
+    using fc_distance_travelled = std::variant<double, std::string>;
 
     struct fleetcarrier {
-        fleetcarrier_distance_travelled fleetcarrier_distance_travelled;
+        fc_distance_travelled fleetcarrier_distance_travelled;
         int64_t fleetcarrier_export_total;
         int64_t fleetcarrier_import_total;
         int64_t fleetcarrier_outfitting_profit;
@@ -301,92 +303,41 @@ namespace hue {
         int64_t markets_traded_with;
         int64_t resources_traded;
     };
+}
 
     /**
      * When written: at startup. This line contains the information displayed in the statistics
      * panel on the right side of the cockpit
      */
     struct statistics {
-        bank_account bank_account;
-        combat combat;
-        std::optional<cqc> cqc;
-        std::optional<crafting> crafting;
-        std::optional<stats_crew> crew;
-        crime crime;
+        types::bank_account bank_account;
+        types::combat combat;
+        std::optional<types::cqc> cqc;
+        std::optional<types::crafting> crafting;
+        std::optional<types::stats_crew> crew;
+        types::crime crime;
         std::string event;
-        std::optional<exobiology> exobiology;
-        exploration exploration;
-        std::optional<fleetcarrier> fleetcarrier;
-        std::optional<material_trader_stats> material_trader_stats;
-        mining mining;
-        std::optional<multicrew> multicrew;
-        stats_passengers passengers;
-        stats_search_and_rescue search_and_rescue;
-        smuggling smuggling;
-        std::optional<squadron> squadron;
-        std::optional<tg_encounters> tg_encounters;
+        std::optional<types::exobiology> exobiology;
+        types::exploration exploration;
+        std::optional<types::fleetcarrier> fleetcarrier;
+        std::optional<types::material_trader_stats> material_trader_stats;
+        types::mining mining;
+        std::optional<types::multicrew> multicrew;
+        types::stats_passengers passengers;
+        types::stats_search_and_rescue search_and_rescue;
+        types::smuggling smuggling;
+        std::optional<types::squadron> squadron;
+        std::optional<types::tg_encounters> tg_encounters;
         /**
          * Timestamp in UTC, ISO 8601
          */
         std::string timestamp;
-        trading trading;
+        types::trading trading;
     };
 }
 
 namespace hue {
-void from_json(const json & j, bank_account & x);
-void to_json(json & j, const bank_account & x);
 
-void from_json(const json & j, combat & x);
-void to_json(json & j, const combat & x);
-
-void from_json(const json & j, cqc & x);
-void to_json(json & j, const cqc & x);
-
-void from_json(const json & j, crafting & x);
-void to_json(json & j, const crafting & x);
-
-void from_json(const json & j, stats_crew & x);
-void to_json(json & j, const stats_crew & x);
-
-void from_json(const json & j, crime & x);
-void to_json(json & j, const crime & x);
-
-void from_json(const json & j, exobiology & x);
-void to_json(json & j, const exobiology & x);
-
-void from_json(const json & j, exploration & x);
-void to_json(json & j, const exploration & x);
-
-void from_json(const json & j, fleetcarrier & x);
-void to_json(json & j, const fleetcarrier & x);
-
-void from_json(const json & j, material_trader_stats & x);
-void to_json(json & j, const material_trader_stats & x);
-
-void from_json(const json & j, mining & x);
-void to_json(json & j, const mining & x);
-
-void from_json(const json & j, multicrew & x);
-void to_json(json & j, const multicrew & x);
-
-void from_json(const json & j, stats_passengers & x);
-void to_json(json & j, const stats_passengers & x);
-
-void from_json(const json & j, stats_search_and_rescue & x);
-void to_json(json & j, const stats_search_and_rescue & x);
-
-void from_json(const json & j, smuggling & x);
-void to_json(json & j, const smuggling & x);
-
-void from_json(const json & j, squadron & x);
-void to_json(json & j, const squadron & x);
-
-void from_json(const json & j, tg_encounters & x);
-void to_json(json & j, const tg_encounters & x);
-
-void from_json(const json & j, trading & x);
-void to_json(json & j, const trading & x);
 
 void from_json(const json & j, statistics & x);
 void to_json(json & j, const statistics & x);
@@ -399,6 +350,7 @@ struct adl_serializer<std::variant<double, std::string>> {
 };
 }
 namespace hue {
+    namespace types {
     inline void from_json(const json & j, bank_account& x) {
         x.current_wealth = j.at("Current_Wealth").get<int64_t>();
         x.insurance_claims = j.at("Insurance_Claims").get<int64_t>();
@@ -712,7 +664,7 @@ namespace hue {
     }
 
     inline void from_json(const json & j, fleetcarrier& x) {
-        x.fleetcarrier_distance_travelled = j.at("FLEETCARRIER_DISTANCE_TRAVELLED").get<fleetcarrier_distance_travelled>();
+        x.fleetcarrier_distance_travelled = j.at("FLEETCARRIER_DISTANCE_TRAVELLED").get<types::fc_distance_travelled>();
         x.fleetcarrier_export_total = j.at("FLEETCARRIER_EXPORT_TOTAL").get<int64_t>();
         x.fleetcarrier_import_total = j.at("FLEETCARRIER_IMPORT_TOTAL").get<int64_t>();
         x.fleetcarrier_outfitting_profit = j.at("FLEETCARRIER_OUTFITTING_PROFIT").get<int64_t>();
@@ -979,28 +931,31 @@ namespace hue {
         j["Resources_Traded"] = x.resources_traded;
     }
 
-    inline void from_json(const json & j, statistics& x) {
-        x.bank_account = j.at("Bank_Account").get<bank_account>();
-        x.combat = j.at("Combat").get<combat>();
-        x.cqc = get_stack_optional<cqc>(j, "CQC");
-        x.crafting = get_stack_optional<crafting>(j, "Crafting");
-        x.crew = get_stack_optional<stats_crew>(j, "Crew");
-        x.crime = j.at("Crime").get<crime>();
-        x.event = j.at("event").get<std::string>();
-        x.exobiology = get_stack_optional<exobiology>(j, "Exobiology");
-        x.exploration = j.at("Exploration").get<exploration>();
-        x.fleetcarrier = get_stack_optional<fleetcarrier>(j, "FLEETCARRIER");
-        x.material_trader_stats = get_stack_optional<material_trader_stats>(j, "Material_Trader_Stats");
-        x.mining = j.at("Mining").get<mining>();
-        x.multicrew = get_stack_optional<multicrew>(j, "Multicrew");
-        x.passengers = j.at("Passengers").get<stats_passengers>();
-        x.search_and_rescue = j.at("Search_And_Rescue").get<stats_search_and_rescue>();
-        x.smuggling = j.at("Smuggling").get<smuggling>();
-        x.squadron = get_stack_optional<squadron>(j, "Squadron");
-        x.tg_encounters = get_stack_optional<tg_encounters>(j, "TG_ENCOUNTERS");
-        x.timestamp = j.at("timestamp").get<std::string>();
-        x.trading = j.at("Trading").get<trading>();
     }
+
+    inline void from_json(const json & j, statistics& x) {
+        x.bank_account = j.at("Bank_Account").get<types::bank_account>();
+        x.combat = j.at("Combat").get<types::combat>();
+        x.cqc = get_stack_optional<types::cqc>(j, "CQC");
+        x.crafting = get_stack_optional<types::crafting>(j, "Crafting");
+        x.crew = get_stack_optional<types::stats_crew>(j, "Crew");
+        x.crime = j.at("Crime").get<types::crime>();
+        x.event = j.at("event").get<std::string>();
+        x.exobiology = get_stack_optional<types::exobiology>(j, "Exobiology");
+        x.exploration = j.at("Exploration").get<types::exploration>();
+        x.fleetcarrier = get_stack_optional<types::fleetcarrier>(j, "FLEETCARRIER");
+        x.material_trader_stats = get_stack_optional<types::material_trader_stats>(j, "Material_Trader_Stats");
+        x.mining = j.at("Mining").get<types::mining>();
+        x.multicrew = get_stack_optional<types::multicrew>(j, "Multicrew");
+        x.passengers = j.at("Passengers").get<types::stats_passengers>();
+        x.search_and_rescue = j.at("Search_And_Rescue").get<types::stats_search_and_rescue>();
+        x.smuggling = j.at("Smuggling").get<types::smuggling>();
+        x.squadron = get_stack_optional<types::squadron>(j, "Squadron");
+        x.tg_encounters = get_stack_optional<types::tg_encounters>(j, "TG_ENCOUNTERS");
+        x.timestamp = j.at("timestamp").get<std::string>();
+        x.trading = j.at("Trading").get<types::trading>();
+    }
+
 
     inline void to_json(json & j, const statistics & x) {
         j = json::object();

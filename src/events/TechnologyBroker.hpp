@@ -23,7 +23,7 @@ namespace hue {
         std::optional<std::string> name_localised;
     };
 
-    struct items_unlocked {
+    struct unlocked_items {
         std::string name;
         std::optional<std::string> name_localised;
     };
@@ -42,7 +42,7 @@ namespace hue {
         std::string broker_type;
         std::vector<commodity> commodities;
         std::string event;
-        std::vector<items_unlocked> items_unlocked;
+        std::vector<unlocked_items> items_unlocked;
         int64_t market_id;
         std::vector<broker_material> materials;
         /**
@@ -56,8 +56,8 @@ namespace hue {
     void from_json(const json & j, commodity & x);
     void to_json(json & j, const commodity & x);
 
-    void from_json(const json & j, items_unlocked & x);
-    void to_json(json & j, const items_unlocked & x);
+    void from_json(const json & j, unlocked_items & x);
+    void to_json(json & j, const unlocked_items & x);
 
     void from_json(const json & j, broker_material& x);
     void to_json(json & j, const broker_material& x);
@@ -78,12 +78,12 @@ namespace hue {
         j["Name_Localised"] = x.name_localised;
     }
 
-    inline void from_json(const json & j, items_unlocked& x) {
+    inline void from_json(const json & j, unlocked_items& x) {
         x.name = j.at("Name").get<std::string>();
         x.name_localised = get_stack_optional<std::string>(j, "Name_Localised");
     }
 
-    inline void to_json(json & j, const items_unlocked & x) {
+    inline void to_json(json & j, const unlocked_items & x) {
         j = json::object();
         j["Name"] = x.name;
         j["Name_Localised"] = x.name_localised;
@@ -108,7 +108,7 @@ namespace hue {
         x.broker_type = j.at("BrokerType").get<std::string>();
         x.commodities = j.at("Commodities").get<std::vector<commodity>>();
         x.event = j.at("event").get<std::string>();
-        x.items_unlocked = j.at("ItemsUnlocked").get<std::vector<items_unlocked>>();
+        x.items_unlocked = j.at("ItemsUnlocked").get<std::vector<unlocked_items>>();
         x.market_id = j.at("MarketID").get<int64_t>();
         x.materials = j.at("Materials").get<std::vector<broker_material>>();
         x.timestamp = j.at("timestamp").get<std::string>();

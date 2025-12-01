@@ -15,16 +15,18 @@
 namespace hue {
     using nlohmann::json;
 
+    namespace types {
 
 
-    struct discovered {
-        int64_t num_bodies;
-        std::string system_name;
-        /**
-         * This field sometime appears in this event containing random data (bug)
-         */
-        std::optional<std::string> system_name_localised;
-    };
+        struct discovered {
+            int64_t num_bodies;
+            std::string system_name;
+            /**
+             * This field sometime appears in this event containing random data (bug)
+             */
+            std::optional<std::string> system_name_localised;
+        };
+    }
 
     /**
      * When written: when selling exploration data in Cartographics, a page at a time
@@ -32,7 +34,7 @@ namespace hue {
     struct multi_sell_exploration_data {
         int64_t base_value;
         int64_t bonus;
-        std::vector<discovered> discovered;
+        std::vector<types::discovered> discovered;
         std::string event;
         /**
          * Timestamp in UTC, ISO 8601
@@ -43,29 +45,26 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, discovered & x);
-    void to_json(json & j, const discovered & x);
 
-    void from_json(const json & j, multi_sell_exploration_data & x);
-    void to_json(json & j, const multi_sell_exploration_data & x);
+    namespace types {
+        inline void from_json(const json & j, discovered& x) {
+            x.num_bodies = j.at("NumBodies").get<int64_t>();
+            x.system_name = j.at("SystemName").get<std::string>();
+            x.system_name_localised = get_stack_optional<std::string>(j, "SystemName_Localised");
+        }
 
-    inline void from_json(const json & j, discovered& x) {
-        x.num_bodies = j.at("NumBodies").get<int64_t>();
-        x.system_name = j.at("SystemName").get<std::string>();
-        x.system_name_localised = get_stack_optional<std::string>(j, "SystemName_Localised");
-    }
-
-    inline void to_json(json & j, const discovered & x) {
-        j = json::object();
-        j["NumBodies"] = x.num_bodies;
-        j["SystemName"] = x.system_name;
-        j["SystemName_Localised"] = x.system_name_localised;
+        inline void to_json(json & j, const discovered & x) {
+            j = json::object();
+            j["NumBodies"] = x.num_bodies;
+            j["SystemName"] = x.system_name;
+            j["SystemName_Localised"] = x.system_name_localised;
+        }
     }
 
     inline void from_json(const json & j, multi_sell_exploration_data& x) {
         x.base_value = j.at("BaseValue").get<int64_t>();
         x.bonus = j.at("Bonus").get<int64_t>();
-        x.discovered = j.at("Discovered").get<std::vector<discovered>>();
+        x.discovered = j.at("Discovered").get<std::vector<types::discovered>>();
         x.event = j.at("event").get<std::string>();
         x.timestamp = j.at("timestamp").get<std::string>();
         x.total_earnings = j.at("TotalEarnings").get<int64_t>();

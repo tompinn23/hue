@@ -173,12 +173,12 @@ const std::optional<__VA_ARGS__>& get_##name() const { return name; }
 
 	struct suit_loadout {
 		int64_t loadout_slot_id;
-		suit suit;
+		suit current_suit;
 		std::string name;
 		std::unordered_map<std::string, std::string> slots;
 
 		RO_GET_VAL(loadout_slot_id, int64_t)
-		RO_GET(suit, hue::suit)
+		RO_GET(current_suit, hue::suit)
 		RO_GET(name, std::string)
 		RO_GET(slots, std::unordered_map<std::string,std::string>)
 	};
@@ -209,7 +209,7 @@ const std::optional<__VA_ARGS__>& get_##name() const { return name; }
 		RO_GET_OPT(time_pledged, int)
 	};
 
-	struct state {
+	struct game_state {
 		// fileheader-derived
 		std::optional<std::string> game_language;
 		std::optional<std::string> game_version;

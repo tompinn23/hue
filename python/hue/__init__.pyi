@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Tuple, Union, Set
 
 @dataclass(frozen=True)
-class module_modifier:
+class ModuleModifier:
     label: str
     less_is_good: int | None
     original_value: float | None
@@ -12,7 +12,7 @@ class module_modifier:
 
 
 @dataclass(frozen=True)
-class module_engineering:
+class ModuleEngineering:
     blueprint_id: int
     blueprint_name: str
     engineer: str | None
@@ -25,13 +25,13 @@ class module_engineering:
 
 
 @dataclass(frozen=True)
-class fuel_tanks:
+class FuelTanks:
     main: float
     reserve: float
 
 
 @dataclass(frozen=True)
-class module:
+class Module:
     ammo_in_clip: int | None
     ammo_in_hopper: int | None
     engineering: module_engineering | None
@@ -44,7 +44,7 @@ class module:
 
 
 @dataclass(frozen=True)
-class suit:
+class Suit:
     suit_id: int
     edmc_name: str
     loc_name: str
@@ -54,7 +54,7 @@ class suit:
 
 
 @dataclass(frozen=True)
-class suit_loadout:
+class SuitLoadout:
     loadout_slot_id: int
     suit: suit
     name: str
@@ -62,7 +62,7 @@ class suit_loadout:
 
 
 @dataclass(frozen=True)
-class backpack_contents:
+class BackpackContents:
     component: Dict[str, int]
     consumable: Dict[str, int]
     item: Dict[str, int]
@@ -70,7 +70,7 @@ class backpack_contents:
 
 
 @dataclass(frozen=True)
-class powerplay_info:
+class PowerplayInfo:
     power: str | None
     rank: int | None
     merits: int | None
@@ -79,7 +79,7 @@ class powerplay_info:
 
 
 @dataclass(frozen=True)
-class state:
+class State:
     game_language: str | None
     game_version: str | None
     game_build: str | None
@@ -114,10 +114,10 @@ class state:
     unladen_mass: float | None
     cargo_capacity: int | None
     max_jump_range: float | None
-    fuel_capacity: fuel_tanks | None
+    fuel_capacity: FuelTanks | None
     rebuy: int | None
 
-    modules: Dict[str, module]
+    modules: Dict[str, Module]
     cargo_json: str | None
     route: str | None
 
@@ -129,12 +129,12 @@ class state:
     consumable: Dict[str, int]
     data: Dict[str, int]
 
-    backpack: backpack_contents
+    backpack: BackpackContents
     backpack_json: str | None
     ship_locker_json: str | None
 
-    suits: Dict[int, suit]
-    suit_loadouts: Dict[int, suit_loadout]
+    suits: Dict[int, Suit]
+    suit_loadouts: Dict[int, SuitLoadout]
     suit_current: int | None
     suit_loadout_current: int | None
 
@@ -154,4 +154,4 @@ class state:
 
     nav_route: str | None
 
-    power_play: powerplay_info
+    power_play: PowerplayInfo

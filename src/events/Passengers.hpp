@@ -27,7 +27,7 @@ namespace hue {
     }
     #endif
 
-    struct manifest {
+    struct manifest_entry {
         int64_t count;
         int64_t mission_id;
         std::string type;
@@ -43,7 +43,7 @@ namespace hue {
         /**
          * Array of passenger records
          */
-        std::vector<manifest> manifest;
+        std::vector<manifest_entry> manifest;
         /**
          * Timestamp in UTC, ISO 8601
          */
@@ -52,13 +52,13 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, manifest & x);
-    void to_json(json & j, const manifest & x);
+    void from_json(const json & j, manifest_entry & x);
+    void to_json(json & j, const manifest_entry & x);
 
     void from_json(const json & j, passengers & x);
     void to_json(json & j, const passengers & x);
 
-    inline void from_json(const json & j, manifest& x) {
+    inline void from_json(const json & j, manifest_entry& x) {
         x.count = j.at("Count").get<int64_t>();
         x.mission_id = j.at("MissionID").get<int64_t>();
         x.type = j.at("Type").get<std::string>();
@@ -66,7 +66,7 @@ namespace hue {
         x.wanted = j.at("Wanted").get<bool>();
     }
 
-    inline void to_json(json & j, const manifest & x) {
+    inline void to_json(json & j, const manifest_entry & x) {
         j = json::object();
         j["Count"] = x.count;
         j["MissionID"] = x.mission_id;
@@ -77,7 +77,7 @@ namespace hue {
 
     inline void from_json(const json & j, passengers& x) {
         x.event = j.at("event").get<std::string>();
-        x.manifest = j.at("Manifest").get<std::vector<manifest>>();
+        x.manifest = j.at("Manifest").get<std::vector<manifest_entry>>();
         x.timestamp = j.at("timestamp").get<std::string>();
     }
 

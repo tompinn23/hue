@@ -17,7 +17,7 @@ namespace hue {
 
 
 
-    struct price_list {
+    struct prices {
         int64_t id;
         int64_t ship_price;
         std::string ship_type;
@@ -42,7 +42,7 @@ namespace hue {
         /**
          * Only written in Shipyard.json
          */
-        std::optional<std::vector<price_list>> price_list;
+        std::optional<std::vector<prices>> price_list;
         std::string star_system;
         std::string station_name;
         /**
@@ -53,20 +53,20 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, price_list & x);
-    void to_json(json & j, const price_list & x);
+    void from_json(const json & j, prices & x);
+    void to_json(json & j, const prices & x);
 
     void from_json(const json & j, shipyard & x);
     void to_json(json & j, const shipyard & x);
 
-    inline void from_json(const json & j, price_list& x) {
+    inline void from_json(const json & j, prices& x) {
         x.id = j.at("id").get<int64_t>();
         x.ship_price = j.at("ShipPrice").get<int64_t>();
         x.ship_type = j.at("ShipType").get<std::string>();
         x.ship_type_localised = get_stack_optional<std::string>(j, "ShipType_Localised");
     }
 
-    inline void to_json(json & j, const price_list & x) {
+    inline void to_json(json & j, const prices & x) {
         j = json::object();
         j["id"] = x.id;
         j["ShipPrice"] = x.ship_price;
@@ -79,7 +79,7 @@ namespace hue {
         x.event = j.at("event").get<std::string>();
         x.horizons = get_stack_optional<bool>(j, "Horizons");
         x.market_id = j.at("MarketID").get<int64_t>();
-        x.price_list = get_stack_optional<std::vector<price_list>>(j, "PriceList");
+        x.price_list = get_stack_optional<std::vector<prices>>(j, "PriceList");
         x.star_system = j.at("StarSystem").get<std::string>();
         x.station_name = j.at("StationName").get<std::string>();
         x.timestamp = j.at("timestamp").get<std::string>();

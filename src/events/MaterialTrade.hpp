@@ -15,7 +15,7 @@
 namespace hue {
     using nlohmann::json;
 
-
+    namespace types {
 
     struct paid {
         std::string category;
@@ -36,6 +36,7 @@ namespace hue {
         std::optional<std::string> material_localised;
         int64_t quantity;
     };
+}
 
     /**
      * When written: when exchanging materials at the Material trader contact
@@ -43,8 +44,8 @@ namespace hue {
     struct material_trade {
         std::string event;
         int64_t market_id;
-        paid paid;
-        received received;
+        types::paid paid;
+        types::received received;
         /**
          * Timestamp in UTC, ISO 8601
          */
@@ -54,50 +55,44 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, paid & x);
-    void to_json(json & j, const paid & x);
+    namespace types {
 
-    void from_json(const json & j, received & x);
-    void to_json(json & j, const received & x);
+        inline void from_json(const json & j, paid& x) {
+            x.category = j.at("Category").get<std::string>();
+            x.material = j.at("Material").get<std::string>();
+            x.material_localised = get_stack_optional<std::string>(j, "Material_Localised");
+            x.quantity = j.at("Quantity").get<int64_t>();
+        }
 
-    void from_json(const json & j, material_trade & x);
-    void to_json(json & j, const material_trade & x);
+        inline void to_json(json & j, const paid & x) {
+            j = json::object();
+            j["Category"] = x.category;
+            j["Material"] = x.material;
+            j["Material_Localised"] = x.material_localised;
+            j["Quantity"] = x.quantity;
+        }
 
-    inline void from_json(const json & j, paid& x) {
-        x.category = j.at("Category").get<std::string>();
-        x.material = j.at("Material").get<std::string>();
-        x.material_localised = get_stack_optional<std::string>(j, "Material_Localised");
-        x.quantity = j.at("Quantity").get<int64_t>();
-    }
+        inline void from_json(const json & j, received& x) {
+            x.category = j.at("Category").get<std::string>();
+            x.material = j.at("Material").get<std::string>();
+            x.material_localised = get_stack_optional<std::string>(j, "Material_Localised");
+            x.quantity = j.at("Quantity").get<int64_t>();
+        }
 
-    inline void to_json(json & j, const paid & x) {
-        j = json::object();
-        j["Category"] = x.category;
-        j["Material"] = x.material;
-        j["Material_Localised"] = x.material_localised;
-        j["Quantity"] = x.quantity;
-    }
-
-    inline void from_json(const json & j, received& x) {
-        x.category = j.at("Category").get<std::string>();
-        x.material = j.at("Material").get<std::string>();
-        x.material_localised = get_stack_optional<std::string>(j, "Material_Localised");
-        x.quantity = j.at("Quantity").get<int64_t>();
-    }
-
-    inline void to_json(json & j, const received & x) {
-        j = json::object();
-        j["Category"] = x.category;
-        j["Material"] = x.material;
-        j["Material_Localised"] = x.material_localised;
-        j["Quantity"] = x.quantity;
+        inline void to_json(json & j, const received & x) {
+            j = json::object();
+            j["Category"] = x.category;
+            j["Material"] = x.material;
+            j["Material_Localised"] = x.material_localised;
+            j["Quantity"] = x.quantity;
+        }
     }
 
     inline void from_json(const json & j, material_trade& x) {
         x.event = j.at("event").get<std::string>();
         x.market_id = j.at("MarketID").get<int64_t>();
-        x.paid = j.at("Paid").get<paid>();
-        x.received = j.at("Received").get<received>();
+        x.paid = j.at("Paid").get<types::paid>();
+        x.received = j.at("Received").get<types::received>();
         x.timestamp = j.at("timestamp").get<std::string>();
         x.trader_type = j.at("TraderType").get<std::string>();
     }

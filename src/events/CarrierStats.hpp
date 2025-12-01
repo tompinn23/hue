@@ -15,46 +15,52 @@
 namespace hue {
     using nlohmann::json;
 
-    struct carrier_crew {
-        bool activated;
-        std::optional<std::string> crew_name;
-        std::string crew_role;
-        std::optional<bool> enabled;
-    };
 
-    struct finance {
-        int64_t available_balance;
-        int64_t carrier_balance;
-        int64_t reserve_balance;
-        std::optional<int64_t> reserve_percent;
-        std::optional<int64_t> tax_rate;
-        std::optional<int64_t> tax_rate_outfitting;
-        std::optional<int64_t> tax_rate_pioneersupplies;
-        std::optional<int64_t> tax_rate_rearm;
-        std::optional<int64_t> tax_rate_refuel;
-        std::optional<int64_t> tax_rate_repair;
-        std::optional<int64_t> tax_rate_shipyard;
-    };
 
-    struct module_pack {
-        std::string pack_theme;
-        int64_t pack_tier;
-    };
+    namespace types {
+        struct carrier_crew {
+            bool activated;
+            std::optional<std::string> crew_name;
+            std::string crew_role;
+            std::optional<bool> enabled;
+        };
 
-    struct ship_pack {
-        std::string pack_theme;
-        int64_t pack_tier;
-    };
+        struct finance {
+            int64_t available_balance;
+            int64_t carrier_balance;
+            int64_t reserve_balance;
+            std::optional<int64_t> reserve_percent;
+            std::optional<int64_t> tax_rate;
+            std::optional<int64_t> tax_rate_outfitting;
+            std::optional<int64_t> tax_rate_pioneersupplies;
+            std::optional<int64_t> tax_rate_rearm;
+            std::optional<int64_t> tax_rate_refuel;
+            std::optional<int64_t> tax_rate_repair;
+            std::optional<int64_t> tax_rate_shipyard;
+        };
 
-    struct space_usage {
-        int64_t cargo;
-        int64_t cargo_space_reserved;
-        int64_t crew;
-        int64_t free_space;
-        int64_t module_packs;
-        int64_t ship_packs;
-        int64_t total_capacity;
-    };
+        struct module_pack {
+            std::string pack_theme;
+            int64_t pack_tier;
+        };
+
+        struct ship_pack {
+            std::string pack_theme;
+            int64_t pack_tier;
+        };
+
+        struct space_usage {
+            int64_t cargo;
+            int64_t cargo_space_reserved;
+            int64_t crew;
+            int64_t free_space;
+            int64_t module_packs;
+            int64_t ship_packs;
+            int64_t total_capacity;
+        };
+    }
+
+
 
     /**
      * When owner opens carrier management
@@ -64,18 +70,18 @@ namespace hue {
         std::string callsign;
         int64_t carrier_id;
         std::optional<std::string> carrier_type;
-        std::vector<carrier_crew> crew;
+        std::vector<types::carrier_crew> crew;
         std::string docking_access;
         std::string event;
-        finance finance;
+        types::finance finance;
         int64_t fuel_level;
         double jump_range_curr;
         double jump_range_max;
-        std::vector<module_pack> module_packs;
+        std::vector<types::module_pack> module_packs;
         std::string name;
         bool pending_decommission;
-        std::vector<ship_pack> ship_packs;
-        space_usage space_usage;
+        std::vector<types::ship_pack> ship_packs;
+        types::space_usage space_usage;
         /**
          * Timestamp in UTC, ISO 8601
          */
@@ -84,24 +90,7 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, carrier_crew & x);
-    void to_json(json & j, const carrier_crew & x);
-
-    void from_json(const json & j, finance & x);
-    void to_json(json & j, const finance & x);
-
-    void from_json(const json & j, module_pack & x);
-    void to_json(json & j, const module_pack & x);
-
-    void from_json(const json & j, ship_pack & x);
-    void to_json(json & j, const ship_pack & x);
-
-    void from_json(const json & j, space_usage & x);
-    void to_json(json & j, const space_usage & x);
-
-    void from_json(const json & j, carrier_stats & x);
-    void to_json(json & j, const carrier_stats & x);
-
+    namespace types {
     inline void from_json(const json & j, carrier_crew& x) {
         x.activated = j.at("Activated").get<bool>();
         x.crew_name = get_stack_optional<std::string>(j, "CrewName");
@@ -188,24 +177,24 @@ namespace hue {
         j["ShipPacks"] = x.ship_packs;
         j["TotalCapacity"] = x.total_capacity;
     }
-
+    }
     inline void from_json(const json & j, carrier_stats& x) {
         x.allow_notorious = j.at("AllowNotorious").get<bool>();
         x.callsign = j.at("Callsign").get<std::string>();
         x.carrier_id = j.at("CarrierID").get<int64_t>();
         x.carrier_type = get_stack_optional<std::string>(j, "CarrierType");
-        x.crew = j.at("Crew").get<std::vector<carrier_crew>>();
+        x.crew = j.at("Crew").get<std::vector<types::carrier_crew>>();
         x.docking_access = j.at("DockingAccess").get<std::string>();
         x.event = j.at("event").get<std::string>();
-        x.finance = j.at("Finance").get<finance>();
+        x.finance = j.at("Finance").get<types::finance>();
         x.fuel_level = j.at("FuelLevel").get<int64_t>();
         x.jump_range_curr = j.at("JumpRangeCurr").get<double>();
         x.jump_range_max = j.at("JumpRangeMax").get<double>();
-        x.module_packs = j.at("ModulePacks").get<std::vector<module_pack>>();
+        x.module_packs = j.at("ModulePacks").get<std::vector<types::module_pack>>();
         x.name = j.at("Name").get<std::string>();
         x.pending_decommission = j.at("PendingDecommission").get<bool>();
-        x.ship_packs = j.at("ShipPacks").get<std::vector<ship_pack>>();
-        x.space_usage = j.at("SpaceUsage").get<space_usage>();
+        x.ship_packs = j.at("ShipPacks").get<std::vector<types::ship_pack>>();
+        x.space_usage = j.at("SpaceUsage").get<types::space_usage>();
         x.timestamp = j.at("timestamp").get<std::string>();
     }
 

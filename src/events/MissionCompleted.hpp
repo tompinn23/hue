@@ -15,47 +15,47 @@
 namespace hue {
     using nlohmann::json;
 
+    namespace types {
+        struct commodity_reward {
+            int64_t count;
+            std::string name;
+            /**
+             * The localised value will be omitted if it is exactly the same as Name
+             */
+            std::optional<std::string> name_localised;
+        };
 
+        struct effect {
+            std::string effect;
+            std::optional<std::string> effect_localised;
+            std::string trend;
+        };
 
-    struct commodity_reward {
-        int64_t count;
-        std::string name;
-        /**
-         * The localised value will be omitted if it is exactly the same as Name
-         */
-        std::optional<std::string> name_localised;
-    };
+        struct influence {
+            std::string influence;
+            int64_t system_address;
+            std::string trend;
+        };
 
-    struct effect {
-        std::string effect;
-        std::optional<std::string> effect_localised;
-        std::string trend;
-    };
+        struct faction_effect {
+            std::vector<effect> effects;
+            std::string faction;
+            std::vector<influence> inf;
+            std::string reputation;
+            std::string reputation_trend;
+        };
 
-    struct influence {
-        std::string influence;
-        int64_t system_address;
-        std::string trend;
-    };
-
-    struct faction_effect {
-        std::vector<effect> effects;
-        std::string faction;
-        std::vector<influence> influence;
-        std::string reputation;
-        std::string reputation_trend;
-    };
-
-    struct materials_reward {
-        std::string category;
-        std::optional<std::string> category_localised;
-        int64_t count;
-        std::string name;
-        /**
-         * The localised value will be omitted if it is exactly the same as Name
-         */
-        std::optional<std::string> name_localised;
-    };
+        struct materials_reward {
+            std::string category;
+            std::optional<std::string> category_localised;
+            int64_t count;
+            std::string name;
+            /**
+             * The localised value will be omitted if it is exactly the same as Name
+             */
+            std::optional<std::string> name_localised;
+        };
+    }
 
     /**
      * When Written: when a mission is completed
@@ -66,7 +66,7 @@ namespace hue {
         /**
          * Names and counts of any commodity rewards
          */
-        std::optional<std::vector<commodity_reward>> commodity_reward;
+        std::optional<std::vector<types::commodity_reward>> commodity_reward;
         std::optional<int64_t> count;
         std::optional<std::string> destination_settlement;
         std::optional<std::string> destination_station;
@@ -75,13 +75,13 @@ namespace hue {
         std::optional<std::string> donation;
         std::string event;
         std::string faction;
-        std::optional<std::vector<faction_effect>> faction_effects;
+        std::optional<std::vector<types::faction_effect>> faction_effects;
         std::optional<int64_t> kill_count;
         std::optional<std::string> localised_name;
         /**
          * Name, category and count of any material rewards
          */
-        std::optional<std::vector<materials_reward>> materials_reward;
+        std::optional<std::vector<types::materials_reward>> materials_reward;
         int64_t mission_id;
         std::string name;
         std::optional<std::string> new_destination_station;
@@ -104,25 +104,9 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, commodity_reward & x);
-    void to_json(json & j, const commodity_reward & x);
 
-    void from_json(const json & j, effect & x);
-    void to_json(json & j, const effect & x);
-
-    void from_json(const json & j, influence & x);
-    void to_json(json & j, const influence & x);
-
-    void from_json(const json & j, faction_effect & x);
-    void to_json(json & j, const faction_effect & x);
-
-    void from_json(const json & j, materials_reward & x);
-    void to_json(json & j, const materials_reward & x);
-
-    void from_json(const json & j, mission_completed & x);
-    void to_json(json & j, const mission_completed & x);
-
-    inline void from_json(const json & j, commodity_reward& x) {
+    namespace types {
+            inline void from_json(const json & j, commodity_reward& x) {
         x.count = j.at("Count").get<int64_t>();
         x.name = j.at("Name").get<std::string>();
         x.name_localised = get_stack_optional<std::string>(j, "Name_Localised");
@@ -164,7 +148,7 @@ namespace hue {
     inline void from_json(const json & j, faction_effect& x) {
         x.effects = j.at("Effects").get<std::vector<effect>>();
         x.faction = j.at("Faction").get<std::string>();
-        x.influence = j.at("Influence").get<std::vector<influence>>();
+        x.inf = j.at("Influence").get<std::vector<influence>>();
         x.reputation = j.at("Reputation").get<std::string>();
         x.reputation_trend = j.at("ReputationTrend").get<std::string>();
     }
@@ -173,7 +157,7 @@ namespace hue {
         j = json::object();
         j["Effects"] = x.effects;
         j["Faction"] = x.faction;
-        j["Influence"] = x.influence;
+        j["Influence"] = x.inf;
         j["Reputation"] = x.reputation;
         j["ReputationTrend"] = x.reputation_trend;
     }
@@ -194,11 +178,12 @@ namespace hue {
         j["Name"] = x.name;
         j["Name_Localised"] = x.name_localised;
     }
+    }
 
     inline void from_json(const json & j, mission_completed& x) {
         x.commodity = get_stack_optional<std::string>(j, "Commodity");
         x.commodity_localised = get_stack_optional<std::string>(j, "Commodity_Localised");
-        x.commodity_reward = get_stack_optional<std::vector<commodity_reward>>(j, "CommodityReward");
+        x.commodity_reward = get_stack_optional<std::vector<types::commodity_reward>>(j, "CommodityReward");
         x.count = get_stack_optional<int64_t>(j, "Count");
         x.destination_settlement = get_stack_optional<std::string>(j, "DestinationSettlement");
         x.destination_station = get_stack_optional<std::string>(j, "DestinationStation");
@@ -207,10 +192,10 @@ namespace hue {
         x.donation = get_stack_optional<std::string>(j, "Donation");
         x.event = j.at("event").get<std::string>();
         x.faction = j.at("Faction").get<std::string>();
-        x.faction_effects = get_stack_optional<std::vector<faction_effect>>(j, "FactionEffects");
+        x.faction_effects = get_stack_optional<std::vector<types::faction_effect>>(j, "FactionEffects");
         x.kill_count = get_stack_optional<int64_t>(j, "KillCount");
         x.localised_name = get_stack_optional<std::string>(j, "LocalisedName");
-        x.materials_reward = get_stack_optional<std::vector<materials_reward>>(j, "MaterialsReward");
+        x.materials_reward = get_stack_optional<std::vector<types::materials_reward>>(j, "MaterialsReward");
         x.mission_id = j.at("MissionID").get<int64_t>();
         x.name = j.at("Name").get<std::string>();
         x.new_destination_station = get_stack_optional<std::string>(j, "NewDestinationStation");

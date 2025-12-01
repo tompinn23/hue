@@ -15,7 +15,7 @@
 namespace hue {
     using nlohmann::json;
 
-
+    namespace types {
 
     struct destination {
         int64_t body;
@@ -28,6 +28,7 @@ namespace hue {
         double fuel_main;
         double fuel_reservoir;
     };
+}
 
     /**
      * This event is written to Status.json which is updated every few seconds
@@ -37,12 +38,12 @@ namespace hue {
         std::optional<int64_t> balance;
         std::optional<std::string> body_name;
         std::optional<double> cargo;
-        std::optional<destination> destination;
+        std::optional<types::destination> destination;
         std::string event;
         std::optional<int64_t> fire_group;
         int64_t flags;
         std::optional<int64_t> flags2;
-        std::optional<fuel> fuel;
+        std::optional<types::fuel> fuel;
         std::optional<double> gravity;
         std::optional<int64_t> gui_focus;
         std::optional<int64_t> heading;
@@ -64,14 +65,7 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, destination & x);
-    void to_json(json & j, const destination & x);
-
-    void from_json(const json & j, fuel & x);
-    void to_json(json & j, const fuel & x);
-
-    void from_json(const json & j, status & x);
-    void to_json(json & j, const status & x);
+    namespace types {
 
     inline void from_json(const json & j, destination& x) {
         x.body = j.at("Body").get<int64_t>();
@@ -98,18 +92,19 @@ namespace hue {
         j["FuelMain"] = x.fuel_main;
         j["FuelReservoir"] = x.fuel_reservoir;
     }
+}
 
     inline void from_json(const json & j, status& x) {
         x.altitude = get_stack_optional<int64_t>(j, "Altitude");
         x.balance = get_stack_optional<int64_t>(j, "Balance");
         x.body_name = get_stack_optional<std::string>(j, "BodyName");
         x.cargo = get_stack_optional<double>(j, "Cargo");
-        x.destination = get_stack_optional<destination>(j, "Destination");
+        x.destination = get_stack_optional<types::destination>(j, "Destination");
         x.event = j.at("event").get<std::string>();
         x.fire_group = get_stack_optional<int64_t>(j, "FireGroup");
         x.flags = j.at("Flags").get<int64_t>();
         x.flags2 = get_stack_optional<int64_t>(j, "Flags2");
-        x.fuel = get_stack_optional<fuel>(j, "Fuel");
+        x.fuel = get_stack_optional<types::fuel>(j, "Fuel");
         x.gravity = get_stack_optional<double>(j, "Gravity");
         x.gui_focus = get_stack_optional<int64_t>(j, "GuiFocus");
         x.heading = get_stack_optional<int64_t>(j, "Heading");

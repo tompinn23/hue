@@ -17,7 +17,8 @@ namespace hue {
 
 
 
-    struct ships_here {
+
+    struct local_ships {
         bool hot;
         std::optional<std::string> name;
         int64_t ship_id;
@@ -26,7 +27,7 @@ namespace hue {
         int64_t value;
     };
 
-    struct ships_remote {
+    struct remote_ships {
         bool hot;
         /**
          * If the ship is in transit
@@ -61,8 +62,8 @@ namespace hue {
     struct stored_ships {
         std::string event;
         int64_t market_id;
-        std::vector<ships_here> ships_here;
-        std::vector<ships_remote> ships_remote;
+        std::vector<local_ships> ships_here;
+        std::vector<remote_ships> ships_remote;
         std::string star_system;
         std::string station_name;
         /**
@@ -73,16 +74,7 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, ships_here & x);
-    void to_json(json & j, const ships_here & x);
-
-    void from_json(const json & j, ships_remote & x);
-    void to_json(json & j, const ships_remote & x);
-
-    void from_json(const json & j, stored_ships & x);
-    void to_json(json & j, const stored_ships & x);
-
-    inline void from_json(const json & j, ships_here& x) {
+    inline void from_json(const json & j, local_ships& x) {
         x.hot = j.at("Hot").get<bool>();
         x.name = get_stack_optional<std::string>(j, "Name");
         x.ship_id = j.at("ShipID").get<int64_t>();
@@ -91,7 +83,7 @@ namespace hue {
         x.value = j.at("Value").get<int64_t>();
     }
 
-    inline void to_json(json & j, const ships_here & x) {
+    inline void to_json(json & j, const local_ships & x) {
         j = json::object();
         j["Hot"] = x.hot;
         j["Name"] = x.name;
@@ -101,7 +93,7 @@ namespace hue {
         j["Value"] = x.value;
     }
 
-    inline void from_json(const json & j, ships_remote& x) {
+    inline void from_json(const json & j, remote_ships& x) {
         x.hot = j.at("Hot").get<bool>();
         x.in_transit = get_stack_optional<bool>(j, "InTransit");
         x.name = get_stack_optional<std::string>(j, "Name");
@@ -115,7 +107,7 @@ namespace hue {
         x.value = j.at("Value").get<int64_t>();
     }
 
-    inline void to_json(json & j, const ships_remote & x) {
+    inline void to_json(json & j, const remote_ships & x) {
         j = json::object();
         j["Hot"] = x.hot;
         j["InTransit"] = x.in_transit;
@@ -133,8 +125,8 @@ namespace hue {
     inline void from_json(const json & j, stored_ships& x) {
         x.event = j.at("event").get<std::string>();
         x.market_id = j.at("MarketID").get<int64_t>();
-        x.ships_here = j.at("ShipsHere").get<std::vector<ships_here>>();
-        x.ships_remote = j.at("ShipsRemote").get<std::vector<ships_remote>>();
+        x.ships_here = j.at("ShipsHere").get<std::vector<local_ships>>();
+        x.ships_remote = j.at("ShipsRemote").get<std::vector<remote_ships>>();
         x.star_system = j.at("StarSystem").get<std::string>();
         x.station_name = j.at("StationName").get<std::string>();
         x.timestamp = j.at("timestamp").get<std::string>();

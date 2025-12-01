@@ -27,6 +27,7 @@ namespace hue {
     }
     #endif
 
+    namespace types {
     struct resources_required {
         std::string name;
         std::string name_localised;
@@ -34,6 +35,7 @@ namespace hue {
         int64_t provided_amount;
         int64_t required_amount;
     };
+}
 
     /**
      * When Written: Every 15 seconds while docked at a construction depot
@@ -44,7 +46,7 @@ namespace hue {
         double construction_progress;
         std::string event;
         int64_t market_id;
-        std::vector<resources_required> resources_required;
+        std::vector<types::resources_required> resources_required;
         /**
          * Timestamp in UTC, ISO 8601
          */
@@ -53,11 +55,8 @@ namespace hue {
 }
 
 namespace hue {
-    void from_json(const json & j, resources_required & x);
-    void to_json(json & j, const resources_required & x);
 
-    void from_json(const json & j, colonisation_construction_depot & x);
-    void to_json(json & j, const colonisation_construction_depot & x);
+    namespace types {
 
     inline void from_json(const json & j, resources_required& x) {
         x.name = j.at("Name").get<std::string>();
@@ -75,6 +74,7 @@ namespace hue {
         j["ProvidedAmount"] = x.provided_amount;
         j["RequiredAmount"] = x.required_amount;
     }
+}
 
     inline void from_json(const json & j, colonisation_construction_depot& x) {
         x.construction_complete = j.at("ConstructionComplete").get<bool>();
@@ -82,7 +82,7 @@ namespace hue {
         x.construction_progress = j.at("ConstructionProgress").get<double>();
         x.event = j.at("event").get<std::string>();
         x.market_id = j.at("MarketID").get<int64_t>();
-        x.resources_required = j.at("ResourcesRequired").get<std::vector<resources_required>>();
+        x.resources_required = j.at("ResourcesRequired").get<std::vector<types::resources_required>>();
         x.timestamp = j.at("timestamp").get<std::string>();
     }
 
