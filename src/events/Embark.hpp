@@ -21,7 +21,7 @@ namespace hue {
     struct embark {
         std::string body;
         int64_t body_id;
-        std::optional<std::vector<crew>> crew;
+        std::optional<std::vector<common::crew>> crew;
         std::string event;
         /**
          * playerΓÇÖs ship ID (if players own vessel)
@@ -67,7 +67,7 @@ namespace hue {
     inline void from_json(const json & j, embark& x) {
         x.body = j.at("Body").get<std::string>();
         x.body_id = j.at("BodyID").get<int64_t>();
-        x.crew = get_stack_optional<std::vector<crew>>(j, "Crew");
+        x.crew = get_stack_optional<std::vector<common::crew>>(j, "Crew");
         x.event = j.at("event").get<std::string>();
         x.id = get_stack_optional<int64_t>(j, "ID");
         x.market_id = get_stack_optional<int64_t>(j, "MarketID");

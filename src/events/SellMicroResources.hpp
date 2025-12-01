@@ -21,7 +21,7 @@ namespace hue {
     struct sell_micro_resources {
         std::string event;
         int64_t market_id;
-        std::vector<micro_resource> micro_resources;
+        std::vector<common::micro_resource> micro_resources;
         int64_t price;
         /**
          * Timestamp in UTC, ISO 8601
@@ -39,7 +39,7 @@ namespace hue {
     inline void from_json(const json & j, sell_micro_resources& x) {
         x.event = j.at("event").get<std::string>();
         x.market_id = j.at("MarketID").get<int64_t>();
-        x.micro_resources = j.at("MicroResources").get<std::vector<micro_resource>>();
+        x.micro_resources = j.at("MicroResources").get<std::vector<common::micro_resource>>();
         x.price = j.at("Price").get<int64_t>();
         x.timestamp = j.at("timestamp").get<std::string>();
         x.total_count = j.at("TotalCount").get<int64_t>();

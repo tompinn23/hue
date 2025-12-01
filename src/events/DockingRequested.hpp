@@ -20,7 +20,7 @@ namespace hue {
      */
     struct docking_requested {
         std::string event;
-        std::optional<landing_pads> landing_pads;
+        std::optional<common::landing_pads> landing_pads;
         int64_t market_id;
         std::string station_name;
         std::optional<std::string> station_name_localised;
@@ -40,7 +40,7 @@ namespace hue {
 
     inline void from_json(const json & j, docking_requested& x) {
         x.event = j.at("event").get<std::string>();
-        x.landing_pads = get_stack_optional<landing_pads>(j, "LandingPads");
+        x.landing_pads = get_stack_optional<common::landing_pads>(j, "LandingPads");
         x.market_id = j.at("MarketID").get<int64_t>();
         x.station_name = j.at("StationName").get<std::string>();
         x.station_name_localised = get_stack_optional<std::string>(j, "StationName_Localised");

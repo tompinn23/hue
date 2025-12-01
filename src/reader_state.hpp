@@ -105,7 +105,7 @@ const std::optional<__VA_ARGS__>& get_##name() const { return name; }
 			value(value)
 		{
 		}
-		explicit module(const module_element& e)
+		explicit module(const common::module_element& e)
 			: ammo_in_clip(e.ammo_in_clip),
 			ammo_in_hopper(e.ammo_in_hopper),
 			health(e.health),

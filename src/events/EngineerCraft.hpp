@@ -41,7 +41,7 @@ namespace hue {
         std::optional<std::string> experimental_effect_localised;
         std::vector<ingredient> ingredients;
         int64_t level;
-        std::vector<modifier> modifiers;
+        std::vector<common::modifier> modifiers;
         std::string engineer_craft_module;
         double quality;
         std::string slot;
@@ -84,7 +84,7 @@ namespace hue {
         x.experimental_effect_localised = get_stack_optional<std::string>(j, "ExperimentalEffect_Localised");
         x.ingredients = j.at("Ingredients").get<std::vector<ingredient>>();
         x.level = j.at("Level").get<int64_t>();
-        x.modifiers = j.at("Modifiers").get<std::vector<modifier>>();
+        x.modifiers = j.at("Modifiers").get<std::vector<common::modifier>>();
         x.engineer_craft_module = j.at("Module").get<std::string>();
         x.quality = j.at("Quality").get<double>();
         x.slot = j.at("Slot").get<std::string>();

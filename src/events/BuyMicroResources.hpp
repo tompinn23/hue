@@ -29,7 +29,7 @@ namespace hue {
         /**
          * New format (eg at Fleet Carrier bartender)
          */
-        std::optional<std::vector<micro_resource>> micro_resources;
+        std::optional<std::vector<common::micro_resource>> micro_resources;
         /**
          * Old format (used for example at supplies vendor)
          */
@@ -60,7 +60,7 @@ namespace hue {
         x.count = get_stack_optional<int64_t>(j, "Count");
         x.event = j.at("event").get<std::string>();
         x.market_id = j.at("MarketID").get<int64_t>();
-        x.micro_resources = get_stack_optional<std::vector<micro_resource>>(j, "MicroResources");
+        x.micro_resources = get_stack_optional<std::vector<common::micro_resource>>(j, "MicroResources");
         x.name = get_stack_optional<std::string>(j, "Name");
         x.name_localised = get_stack_optional<std::string>(j, "Name_Localised");
         x.price = j.at("Price").get<int64_t>();

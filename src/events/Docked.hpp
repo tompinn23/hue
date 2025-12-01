@@ -32,7 +32,7 @@ namespace hue {
         std::optional<bool> cockpit_breach;
         double dist_from_star_ls;
         std::string event;
-        std::optional<landing_pads> landing_pads;
+        std::optional<common::landing_pads> landing_pads;
         int64_t market_id;
         std::optional<bool> multicrew;
         std::string star_system;
@@ -40,7 +40,7 @@ namespace hue {
         /**
          * Only if station has multiple economies
          */
-        std::optional<std::vector<station_economy>> station_economies;
+        std::optional<std::vector<common::station_economy>> station_economies;
         /**
          * Only if station has a single economy
          */
@@ -49,7 +49,7 @@ namespace hue {
          * Only if station has a single economy
          */
         std::optional<std::string> station_economy_localised;
-        std::optional<station_faction> station_faction;
+        std::optional<common::station_faction> station_faction;
         std::string station_government;
         std::optional<std::string> station_government_localised;
         std::string station_name;
@@ -87,15 +87,15 @@ namespace hue {
         x.cockpit_breach = get_stack_optional<bool>(j, "CockpitBreach");
         x.dist_from_star_ls = j.at("DistFromStarLS").get<double>();
         x.event = j.at("event").get<std::string>();
-        x.landing_pads = get_stack_optional<landing_pads>(j, "LandingPads");
+        x.landing_pads = get_stack_optional<common::landing_pads>(j, "LandingPads");
         x.market_id = j.at("MarketID").get<int64_t>();
         x.multicrew = get_stack_optional<bool>(j, "Multicrew");
         x.star_system = j.at("StarSystem").get<std::string>();
         x.station_allegiance = get_stack_optional<std::string>(j, "StationAllegiance");
-        x.station_economies = get_stack_optional<std::vector<station_economy>>(j, "StationEconomies");
+        x.station_economies = get_stack_optional<std::vector<common::station_economy>>(j, "StationEconomies");
         x.station_economy = get_stack_optional<std::string>(j, "StationEconomy");
         x.station_economy_localised = get_stack_optional<std::string>(j, "StationEconomy_Localised");
-        x.station_faction = get_stack_optional<station_faction>(j, "StationFaction");
+        x.station_faction = get_stack_optional<common::station_faction>(j, "StationFaction");
         x.station_government = j.at("StationGovernment").get<std::string>();
         x.station_government_localised = get_stack_optional<std::string>(j, "StationGovernment_Localised");
         x.station_name = j.at("StationName").get<std::string>();

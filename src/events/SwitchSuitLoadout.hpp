@@ -22,7 +22,7 @@ namespace hue {
         std::string event;
         int64_t loadout_id;
         std::string loadout_name;
-        std::vector<suit_module_element> modules;
+        std::vector<common::suit_module_element> modules;
         int64_t suit_id;
         std::vector<std::string> suit_mods;
         std::string suit_name;
@@ -44,7 +44,7 @@ namespace hue {
         x.event = j.at("event").get<std::string>();
         x.loadout_id = j.at("LoadoutID").get<int64_t>();
         x.loadout_name = j.at("LoadoutName").get<std::string>();
-        x.modules = j.at("Modules").get<std::vector<suit_module_element>>();
+        x.modules = j.at("Modules").get<std::vector<common::suit_module_element>>();
         x.suit_id = j.at("SuitID").get<int64_t>();
         x.suit_mods = j.at("SuitMods").get<std::vector<std::string>>();
         x.suit_name = j.at("SuitName").get<std::string>();

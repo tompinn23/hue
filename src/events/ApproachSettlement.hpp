@@ -24,10 +24,10 @@ namespace hue {
         std::string name;
         std::optional<std::string> name_localised;
         std::optional<std::string> station_allegiance;
-        std::optional<std::vector<station_economy>> station_economies;
+        std::optional<std::vector<common::station_economy>> station_economies;
         std::optional<std::string> station_economy;
         std::optional<std::string> station_economy_localised;
-        std::optional<station_faction> station_faction;
+        std::optional<common::station_faction> station_faction;
         std::optional<std::string> station_government;
         std::optional<std::string> station_government_localised;
         std::optional<std::vector<std::string>> station_services;
@@ -55,10 +55,10 @@ namespace hue {
         x.name = j.at("Name").get<std::string>();
         x.name_localised = get_stack_optional<std::string>(j, "Name_Localised");
         x.station_allegiance = get_stack_optional<std::string>(j, "StationAllegiance");
-        x.station_economies = get_stack_optional<std::vector<station_economy>>(j, "StationEconomies");
+        x.station_economies = get_stack_optional<std::vector<common::station_economy>>(j, "StationEconomies");
         x.station_economy = get_stack_optional<std::string>(j, "StationEconomy");
         x.station_economy_localised = get_stack_optional<std::string>(j, "StationEconomy_Localised");
-        x.station_faction = get_stack_optional<station_faction>(j, "StationFaction");
+        x.station_faction = get_stack_optional<common::station_faction>(j, "StationFaction");
         x.station_government = get_stack_optional<std::string>(j, "StationGovernment");
         x.station_government_localised = get_stack_optional<std::string>(j, "StationGovernment_Localised");
         x.station_services = get_stack_optional<std::vector<std::string>>(j, "StationServices");

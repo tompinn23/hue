@@ -21,7 +21,7 @@ namespace hue {
         std::string body;
         int64_t body_id;
         std::string body_type;
-        std::optional<std::vector<conflict>> conflicts;
+        std::optional<std::vector<common::conflict>> conflicts;
         /**
          * Controlling power for the system
          */
@@ -35,7 +35,7 @@ namespace hue {
          */
         bool docked;
         std::string event;
-        std::optional<std::vector<faction>> factions;
+        std::optional<std::vector<common::faction>> factions;
         std::optional<bool> in_srv;
         std::optional<double> latitude;
         std::optional<double> longitude;
@@ -50,7 +50,7 @@ namespace hue {
          * When the system is unoccupied and 1 or more powers are fighting for control by reaching
          * 120k merits.
          */
-        std::optional<std::vector<powerplay_conflict_progress>> powerplay_conflict_progress;
+        std::optional<std::vector<common::powerplay_conflict_progress>> powerplay_conflict_progress;
         /**
          * Powerplay state for the system.
          */
@@ -84,7 +84,7 @@ namespace hue {
         /**
          * If starting docked in a station
          */
-        std::optional<std::vector<station_economy>> station_economies;
+        std::optional<std::vector<common::station_economy>> station_economies;
         /**
          * If starting docked in a station
          */
@@ -96,7 +96,7 @@ namespace hue {
         /**
          * If starting docked in a station
          */
-        std::optional<station_faction> station_faction;
+        std::optional<common::station_faction> station_faction;
         /**
          * If starting docked in a station
          */
@@ -119,7 +119,7 @@ namespace hue {
         /**
          * System controlling faction
          */
-        std::optional<system_faction> system_faction;
+        std::optional<common::system_faction> system_faction;
         std::string system_government;
         std::optional<std::string> system_government_localised;
         std::string system_second_economy;
@@ -133,7 +133,7 @@ namespace hue {
         /**
          * Thargoid war information
          */
-        std::optional<thargoid_war> thargoid_war;
+        std::optional<common::thargoid_war> thargoid_war;
         /**
          * Timestamp in UTC, ISO 8601
          */
@@ -152,12 +152,12 @@ namespace hue {
         x.body = j.at("Body").get<std::string>();
         x.body_id = j.at("BodyID").get<int64_t>();
         x.body_type = j.at("BodyType").get<std::string>();
-        x.conflicts = get_stack_optional<std::vector<conflict>>(j, "Conflicts");
+        x.conflicts = get_stack_optional<std::vector<common::conflict>>(j, "Conflicts");
         x.controlling_power = get_stack_optional<std::string>(j, "ControllingPower");
         x.dist_from_star_ls = get_stack_optional<double>(j, "DistFromStarLS");
         x.docked = j.at("Docked").get<bool>();
         x.event = j.at("event").get<std::string>();
-        x.factions = get_stack_optional<std::vector<faction>>(j, "Factions");
+        x.factions = get_stack_optional<std::vector<common::faction>>(j, "Factions");
         x.in_srv = get_stack_optional<bool>(j, "InSRV");
         x.latitude = get_stack_optional<double>(j, "Latitude");
         x.longitude = get_stack_optional<double>(j, "Longitude");
@@ -165,7 +165,7 @@ namespace hue {
         x.multicrew = get_stack_optional<bool>(j, "Multicrew");
         x.on_foot = get_stack_optional<bool>(j, "OnFoot");
         x.population = j.at("Population").get<int64_t>();
-        x.powerplay_conflict_progress = get_stack_optional<std::vector<powerplay_conflict_progress>>(j, "PowerplayConflictProgress");
+        x.powerplay_conflict_progress = get_stack_optional<std::vector<common::powerplay_conflict_progress>>(j, "PowerplayConflictProgress");
         x.powerplay_state = get_stack_optional<std::string>(j, "PowerplayState");
         x.powerplay_state_control_progress = get_stack_optional<double>(j, "PowerplayStateControlProgress");
         x.powerplay_state_reinforcement = get_stack_optional<int64_t>(j, "PowerplayStateReinforcement");
@@ -174,10 +174,10 @@ namespace hue {
         x.star_pos = j.at("StarPos").get<std::vector<double>>();
         x.star_system = j.at("StarSystem").get<std::string>();
         x.station_allegiance = get_stack_optional<std::string>(j, "StationAllegiance");
-        x.station_economies = get_stack_optional<std::vector<station_economy>>(j, "StationEconomies");
+        x.station_economies = get_stack_optional<std::vector<common::station_economy>>(j, "StationEconomies");
         x.station_economy = get_stack_optional<std::string>(j, "StationEconomy");
         x.station_economy_localised = get_stack_optional<std::string>(j, "StationEconomy_Localised");
-        x.station_faction = get_stack_optional<station_faction>(j, "StationFaction");
+        x.station_faction = get_stack_optional<common::station_faction>(j, "StationFaction");
         x.station_government = get_stack_optional<std::string>(j, "StationGovernment");
         x.station_government_localised = get_stack_optional<std::string>(j, "StationGovernment_Localised");
         x.station_name = get_stack_optional<std::string>(j, "StationName");
@@ -188,7 +188,7 @@ namespace hue {
         x.system_allegiance = j.at("SystemAllegiance").get<std::string>();
         x.system_economy = j.at("SystemEconomy").get<std::string>();
         x.system_economy_localised = get_stack_optional<std::string>(j, "SystemEconomy_Localised");
-        x.system_faction = get_stack_optional<system_faction>(j, "SystemFaction");
+        x.system_faction = get_stack_optional<common::system_faction>(j, "SystemFaction");
         x.system_government = j.at("SystemGovernment").get<std::string>();
         x.system_government_localised = get_stack_optional<std::string>(j, "SystemGovernment_Localised");
         x.system_second_economy = j.at("SystemSecondEconomy").get<std::string>();
@@ -196,7 +196,7 @@ namespace hue {
         x.system_security = j.at("SystemSecurity").get<std::string>();
         x.system_security_localised = get_stack_optional<std::string>(j, "SystemSecurity_Localised");
         x.taxi = get_stack_optional<bool>(j, "Taxi");
-        x.thargoid_war = get_stack_optional<thargoid_war>(j, "ThargoidWar");
+        x.thargoid_war = get_stack_optional<common::thargoid_war>(j, "ThargoidWar");
         x.timestamp = j.at("timestamp").get<std::string>();
         x.wanted = get_stack_optional<bool>(j, "Wanted");
     }

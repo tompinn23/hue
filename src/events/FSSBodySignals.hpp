@@ -24,7 +24,7 @@ namespace hue {
         int64_t body_id;
         std::string body_name;
         std::string event;
-        std::vector<signal> signals;
+        std::vector<common::signal> signals;
         int64_t system_address;
         /**
          * Timestamp in UTC, ISO 8601
@@ -44,7 +44,7 @@ namespace hue {
         x.body_id = j.at("BodyID").get<int64_t>();
         x.body_name = j.at("BodyName").get<std::string>();
         x.event = j.at("event").get<std::string>();
-        x.signals = j.at("Signals").get<std::vector<signal>>();
+        x.signals = j.at("Signals").get<std::vector<common::signal>>();
         x.system_address = j.at("SystemAddress").get<int64_t>();
         x.timestamp = j.at("timestamp").get<std::string>();
     }

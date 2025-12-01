@@ -29,15 +29,18 @@ FetchContent_MakeAvailable(spdlog)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
+if(WIN32)
+set(PLATFORM_SOURCE src/watch_win32.cpp src/process.cpp)
+endif()
 
 file(GLOB EVENT_SOURCE "src/events/*.cpp")
 
 add_library(events ${EVENT_SOURCE} "src/registry.cpp")
 target_link_libraries(events PRIVATE nlohmann_json::nlohmann_json)
-add_executable(seahugh src/reader.cpp src/watch.cpp src/process.cpp src/main.cpp)
+add_executable(seahugh src/reader.cpp  src/main.cpp ${PLATFORM_SOURCE})
 target_include_directories(seahugh PRIVATE src/)
 target_link_libraries(seahugh PRIVATE events nlohmann_json::nlohmann_json re2::re2 spdlog::spdlog fmt::fmt)
 
 
-pybind11_add_module(_core src/python.cpp src/reader.cpp src/watch.cpp src/process.cpp)
+pybind11_add_module(_core src/python.cpp src/reader.cpp ${PLATFORM_SOURCE})
 target_link_libraries(_core PRIVATE events nlohmann_json::nlohmann_json re2::re2 spdlog::spdlog fmt::fmt)

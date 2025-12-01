@@ -28,11 +28,11 @@ namespace hue {
      * Same as ShipLocker, but discontinued.
      */
     struct ship_locker_materials {
-        std::vector<component> components;
-        std::vector<consumable> consumables;
+        std::vector<common::component> components;
+        std::vector<common::consumable> consumables;
         std::vector<datum> data;
         std::string event;
-        std::vector<backpack_item> items;
+        std::vector<common::backpack_item> items;
         /**
          * Timestamp in UTC, ISO 8601
          */
@@ -66,11 +66,11 @@ namespace hue {
     }
 
     inline void from_json(const json & j, ship_locker_materials& x) {
-        x.components = j.at("Components").get<std::vector<component>>();
-        x.consumables = j.at("Consumables").get<std::vector<consumable>>();
+        x.components = j.at("Components").get<std::vector<common::component>>();
+        x.consumables = j.at("Consumables").get<std::vector<common::consumable>>();
         x.data = j.at("Data").get<std::vector<datum>>();
         x.event = j.at("event").get<std::string>();
-        x.items = j.at("Items").get<std::vector<backpack_item>>();
+        x.items = j.at("Items").get<std::vector<common::backpack_item>>();
         x.timestamp = j.at("timestamp").get<std::string>();
     }
 
