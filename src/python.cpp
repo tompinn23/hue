@@ -51,13 +51,16 @@ private:
 
 class PyEventIterator {
 public:
-    PyEventIterator(std::shared_ptr<reader> r)
-        : _reader(std::move(r)) {
+    PyEventIterator(std::shared_ptr<reader> r, int max_timeout, py::object stop_event)
+        : _reader(std::move(r)), stop_event(std::move(stop_event)), max_timeout(max_timeout) {
     }
 
     py::object next() {
         py::gil_scoped_release release;    // release GIL during blocking wait
-
+        auto start = std::chrono::steady_clock::now();
+        auto deadline = (max_timeout > 0)
+            ? start + std::chrono::milliseconds{max_timeout}
+            : std::chrono::steady_clock::time_point::max();
         while (true) {
             auto h = _reader->acquire();
             if (!h) {
@@ -74,6 +77,14 @@ public:
             if (PyErr_CheckSignals() != 0) {
                 throw py::error_already_set();
             }
+            if(!stop_event.is_none() && py::cast<bool>(stop_event.attr("is_set")())) {
+                return py::str("stop");
+            }
+            if (std::chrono::steady_clock::now() >= deadline) {
+                return py::str("timeout");
+            }
+
+
             if (!ok) {
                 continue;
             }
@@ -85,6 +96,8 @@ public:
 
 private:
     std::shared_ptr<reader> _reader;
+    int max_timeout;
+    py::object stop_event;
 };
 
 class py_reader {
@@ -106,8 +119,19 @@ public:
             });
     }
 
-    PyEventIterator events() {
-        return PyEventIterator(_reader);
+    py_reader& __enter__() {
+        start();
+        return *this;
+    }
+
+    void __exit__(py::object exc_type, py::object exc_value, py::object traceback) {
+        _reader->stop();
+        if (thr.joinable())
+            thr.join();
+    }
+
+    PyEventIterator events(int max_timeout, py::object stop_event) {
+        return PyEventIterator(_reader, max_timeout, stop_event);
     }
 
 private:
@@ -129,7 +153,9 @@ PYBIND11_MODULE(_core, m) {
     py::class_<py_reader>(m, "Reader")
         .def(py::init<const std::string&>())
         .def("start", &py_reader::start)  // if you want
-		.def("events", &py_reader::events);
+		.def("events", &py_reader::events)
+        .def("__enter__", &py_reader::__enter__)
+        .def("__exit__", &py_reader::__exit__);
 
     py::class_<PyEventIterator>(m, "EventIterator")
         .def("__iter__", [](PyEventIterator& it) -> PyEventIterator& {

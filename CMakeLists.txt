@@ -40,6 +40,7 @@ file(GLOB EVENT_SOURCE "src/events/*.cpp")
 
 add_library(events ${EVENT_SOURCE} "src/registry.cpp")
 target_link_libraries(events PRIVATE nlohmann_json::nlohmann_json)
+
 add_executable(seahugh src/reader.cpp  src/main.cpp ${PLATFORM_SOURCE})
 target_include_directories(seahugh PRIVATE src/)
 target_link_libraries(seahugh PRIVATE events nlohmann_json::nlohmann_json re2::re2 spdlog::spdlog fmt::fmt)

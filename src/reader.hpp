@@ -18,6 +18,8 @@
 
 namespace hue {
 
+	using namespace nlohmann;
+
 	struct startup {
 		std::string timestamp;
 		std::string event;

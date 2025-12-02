@@ -5,3 +5,6 @@
 out/
 cmake-build-*/
 build/
+
+python/hue/_version.py
+__pycache__/

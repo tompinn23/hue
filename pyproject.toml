@@ -5,9 +5,9 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "hue"
-version = "0.1.0"
 description="A minimal example package (with pybind11)"
 readme = "README.md"
+dynamic = ["version"]
 authors = [
     { name = "My Name", email = "me@email.com" },
 ]
@@ -21,6 +21,11 @@ classifiers = [
 ]
 
 
+
+[tool.setuptools_scm]  # Section required
+write_to = "python/hue/_version.py"
+
+
 [dependency-groups]
 test = ["pytest"]
 dev = [{ include-group = "test" }]
@@ -28,7 +33,14 @@ dev = [{ include-group = "test" }]
 
 [tool.scikit-build]
 minimum-version = "build-system.requires"
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
+sdist.include = ["python/hue/_version.py"]
 
+[tool.scikit-build.build]
+targets = ["_core"]
+
+[tool.scikit-build.cmake]
+args =[ "-G", "Ninja" ]
 
 [tool.pytest.ini_options]
 minversion = "8.0"
